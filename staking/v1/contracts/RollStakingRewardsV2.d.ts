@@ -46,10 +46,11 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     "rewardsDistribution()": FunctionFragment;
     "rewardsDuration()": FunctionFragment;
     "setPaused(bool)": FunctionFragment;
-    "setRewards(uint256,uint256)": FunctionFragment;
     "setRewardsDistribution(address)": FunctionFragment;
+    "setRewardsDuration(uint256,uint256)": FunctionFragment;
     "stake(uint256)": FunctionFragment;
     "token()": FunctionFragment;
+    "tokenDecimals()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "userRewardPerTokenPaid(address,address)": FunctionFragment;
     "withdraw(uint256)": FunctionFragment;
@@ -135,15 +136,19 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "setPaused", values: [boolean]): string;
   encodeFunctionData(
-    functionFragment: "setRewards",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setRewardsDistribution",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setRewardsDuration",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "stake", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "tokenDecimals",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
@@ -230,13 +235,20 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPaused", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setRewards", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setRewardsDistribution",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRewardsDuration",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "tokenDecimals",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -444,14 +456,14 @@ export class RollStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setRewards(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
+    setRewardsDistribution(
+      _rewardsDistribution: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setRewardsDistribution(
-      _rewardsDistribution: string,
+    setRewardsDuration(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -461,6 +473,8 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     token(overrides?: CallOverrides): Promise<[string]>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -567,14 +581,14 @@ export class RollStakingRewardsV2 extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setRewards(
-    _periodStart: BigNumberish,
-    _rewardsDuration: BigNumberish,
+  setRewardsDistribution(
+    _rewardsDistribution: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setRewardsDistribution(
-    _rewardsDistribution: string,
+  setRewardsDuration(
+    _periodStart: BigNumberish,
+    _rewardsDuration: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -584,6 +598,8 @@ export class RollStakingRewardsV2 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   token(overrides?: CallOverrides): Promise<string>;
+
+  tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -681,20 +697,22 @@ export class RollStakingRewardsV2 extends BaseContract {
 
     setPaused(_paused: boolean, overrides?: CallOverrides): Promise<void>;
 
-    setRewards(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
+    setRewardsDistribution(
+      _rewardsDistribution: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setRewardsDistribution(
-      _rewardsDistribution: string,
+    setRewardsDuration(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     stake(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -926,14 +944,14 @@ export class RollStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setRewards(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
+    setRewardsDistribution(
+      _rewardsDistribution: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setRewardsDistribution(
-      _rewardsDistribution: string,
+    setRewardsDuration(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -943,6 +961,8 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<BigNumber>;
 
     token(overrides?: CallOverrides): Promise<BigNumber>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1055,14 +1075,14 @@ export class RollStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setRewards(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
+    setRewardsDistribution(
+      _rewardsDistribution: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setRewardsDistribution(
-      _rewardsDistribution: string,
+    setRewardsDuration(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1072,6 +1092,8 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    tokenDecimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
