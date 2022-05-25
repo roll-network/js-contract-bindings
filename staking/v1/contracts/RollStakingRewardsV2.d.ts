@@ -27,6 +27,7 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     "earned(address,address)": FunctionFragment;
     "exit()": FunctionFragment;
     "freeTokens(address)": FunctionFragment;
+    "getFreeTokenAmount(address)": FunctionFragment;
     "getReward()": FunctionFragment;
     "getRewardForDuration(address)": FunctionFragment;
     "isValidRewardToken(address)": FunctionFragment;
@@ -74,6 +75,10 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "exit", values?: undefined): string;
   encodeFunctionData(functionFragment: "freeTokens", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getFreeTokenAmount",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "getReward", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getRewardForDuration",
@@ -186,6 +191,10 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "earned", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "exit", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "freeTokens", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getFreeTokenAmount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getReward", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRewardForDuration",
@@ -405,6 +414,11 @@ export class RollStakingRewardsV2 extends BaseContract {
 
     freeTokens(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getFreeTokenAmount(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getReward(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -541,6 +555,11 @@ export class RollStakingRewardsV2 extends BaseContract {
 
   freeTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  getFreeTokenAmount(
+    token: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getReward(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -667,6 +686,11 @@ export class RollStakingRewardsV2 extends BaseContract {
     exit(overrides?: CallOverrides): Promise<void>;
 
     freeTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getFreeTokenAmount(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getReward(overrides?: CallOverrides): Promise<void>;
 
@@ -923,6 +947,11 @@ export class RollStakingRewardsV2 extends BaseContract {
 
     freeTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    getFreeTokenAmount(
+      token: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReward(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1055,6 +1084,11 @@ export class RollStakingRewardsV2 extends BaseContract {
 
     freeTokens(
       arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getFreeTokenAmount(
+      token: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
