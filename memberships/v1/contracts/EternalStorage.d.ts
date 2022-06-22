@@ -21,20 +21,111 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface EternalStorageInterface extends ethers.utils.Interface {
   functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "WRITER_ROLE()": FunctionFragment;
+    "addCampaign((bytes32,uint256,bytes32[],string))": FunctionFragment;
+    "campaigns(uint256)": FunctionFragment;
+    "campaignsByOwner(address,uint256)": FunctionFragment;
+    "campaignsByOwnerLength(address)": FunctionFragment;
+    "campaignsLength()": FunctionFragment;
+    "getBuyPerWallet(bytes32,address)": FunctionFragment;
+    "getCampaign(uint256)": FunctionFragment;
+    "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
+    "scheduleToCampaign(bytes32)": FunctionFragment;
     "schedules(bytes32)": FunctionFragment;
     "schedulesReferral(bytes32)": FunctionFragment;
+    "setBuyPerWallet(bytes32,address,uint256)": FunctionFragment;
+    "setCampaign(uint256,(bytes32,uint256,bytes32[],string))": FunctionFragment;
+    "setClaimed(bytes32,uint8,uint256)": FunctionFragment;
     "setReferral(bytes32,(address,uint256))": FunctionFragment;
-    "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256))": FunctionFragment;
+    "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256,uint256))": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "WRITER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addCampaign",
+    values: [
+      {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      }
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaigns",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignsByOwner",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignsByOwnerLength",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "campaignsLength",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBuyPerWallet",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaign",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClaimed",
+    values: [BytesLike, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "getReferral",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSchedule",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "scheduleToCampaign",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
@@ -44,6 +135,26 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "schedulesReferral",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setBuyPerWallet",
+    values: [BytesLike, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setCampaign",
+    values: [
+      BigNumberish,
+      {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      }
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setClaimed",
+    values: [BytesLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setReferral",
@@ -67,16 +178,70 @@ interface EternalStorageInterface extends ethers.utils.Interface {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       }
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "WRITER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addCampaign",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "campaigns", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignsByOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignsByOwnerLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "campaignsLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBuyPerWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaign",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getReferral",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getSchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "scheduleToCampaign",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "schedules", data: BytesLike): Result;
@@ -85,6 +250,15 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setBuyPerWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setCampaign",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setClaimed", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "setReferral",
     data: BytesLike
   ): Result;
@@ -92,9 +266,43 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     functionFragment: "setSchedule",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
 
-  events: {};
+  events: {
+    "CampaignCreated(address,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "CampaignCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
+
+export type CampaignCreatedEvent = TypedEvent<
+  [string, BigNumber] & { from: string; campaignIndex: BigNumber }
+>;
+
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string] & {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
 
 export class EternalStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -140,12 +348,78 @@ export class EternalStorage extends BaseContract {
   interface: EternalStorageInterface;
 
   functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    WRITER_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    campaigns(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string] & {
+        campaignId: string;
+        phasesLength: BigNumber;
+        metadata: string;
+      }
+    >;
+
+    campaignsByOwner(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    campaignsByOwnerLength(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    campaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getCampaign(
+      record: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [string, BigNumber, string[], string] & {
+          campaignId: string;
+          phasesLength: BigNumber;
+          phases: string[];
+          metadata: string;
+        }
+      ]
+    >;
+
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
     ): Promise<
       [[string, BigNumber] & { referral: string; referralFee: BigNumber }]
     >;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getSchedule(
       record: BytesLike,
@@ -165,6 +439,7 @@ export class EternalStorage extends BaseContract {
           BigNumber[],
           [string, number] & { token: string; assetType: number },
           BigNumber,
+          BigNumber,
           BigNumber
         ] & {
           initialized: boolean;
@@ -180,8 +455,44 @@ export class EternalStorage extends BaseContract {
           paymentAsset: [string, number] & { token: string; assetType: number };
           pricePerLot: BigNumber;
           rollFee: BigNumber;
+          maxBuyPerWallet: BigNumber;
         }
       ]
+    >;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    scheduleToCampaign(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, BigNumber] & {
+        campaignId: string;
+        campaignIndex: BigNumber;
+        scheduleIndex: BigNumber;
+      }
     >;
 
     schedules(
@@ -199,6 +510,7 @@ export class EternalStorage extends BaseContract {
         BigNumber,
         [string, number] & { token: string; assetType: number },
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         initialized: boolean;
@@ -212,6 +524,7 @@ export class EternalStorage extends BaseContract {
         paymentAsset: [string, number] & { token: string; assetType: number };
         pricePerLot: BigNumber;
         rollFee: BigNumber;
+        maxBuyPerWallet: BigNumber;
       }
     >;
 
@@ -221,6 +534,31 @@ export class EternalStorage extends BaseContract {
     ): Promise<
       [string, BigNumber] & { referral: string; referralFee: BigNumber }
     >;
+
+    setBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setCampaign(
+      record: BigNumberish,
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setReferral(
       record: BytesLike,
@@ -244,10 +582,78 @@ export class EternalStorage extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
+
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  WRITER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  addCampaign(
+    value: {
+      campaignId: BytesLike;
+      phasesLength: BigNumberish;
+      phases: BytesLike[];
+      metadata: string;
+    },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  campaigns(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, string] & {
+      campaignId: string;
+      phasesLength: BigNumber;
+      metadata: string;
+    }
+  >;
+
+  campaignsByOwner(
+    arg0: string,
+    arg1: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  campaignsByOwnerLength(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  campaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getBuyPerWallet(
+    scheduleID: BytesLike,
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getCampaign(
+    record: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, string[], string] & {
+      campaignId: string;
+      phasesLength: BigNumber;
+      phases: string[];
+      metadata: string;
+    }
+  >;
+
+  getClaimed(
+    scheduleID: BytesLike,
+    userType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getReferral(
     record: BytesLike,
@@ -255,6 +661,8 @@ export class EternalStorage extends BaseContract {
   ): Promise<
     [string, BigNumber] & { referral: string; referralFee: BigNumber }
   >;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getSchedule(
     record: BytesLike,
@@ -273,6 +681,7 @@ export class EternalStorage extends BaseContract {
       BigNumber[],
       [string, number] & { token: string; assetType: number },
       BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       initialized: boolean;
@@ -288,6 +697,42 @@ export class EternalStorage extends BaseContract {
       paymentAsset: [string, number] & { token: string; assetType: number };
       pricePerLot: BigNumber;
       rollFee: BigNumber;
+      maxBuyPerWallet: BigNumber;
+    }
+  >;
+
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  scheduleToCampaign(
+    arg0: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber, BigNumber] & {
+      campaignId: string;
+      campaignIndex: BigNumber;
+      scheduleIndex: BigNumber;
     }
   >;
 
@@ -306,6 +751,7 @@ export class EternalStorage extends BaseContract {
       BigNumber,
       [string, number] & { token: string; assetType: number },
       BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       initialized: boolean;
@@ -319,6 +765,7 @@ export class EternalStorage extends BaseContract {
       paymentAsset: [string, number] & { token: string; assetType: number };
       pricePerLot: BigNumber;
       rollFee: BigNumber;
+      maxBuyPerWallet: BigNumber;
     }
   >;
 
@@ -328,6 +775,31 @@ export class EternalStorage extends BaseContract {
   ): Promise<
     [string, BigNumber] & { referral: string; referralFee: BigNumber }
   >;
+
+  setBuyPerWallet(
+    scheduleID: BytesLike,
+    addr: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setCampaign(
+    record: BigNumberish,
+    value: {
+      campaignId: BytesLike;
+      phasesLength: BigNumberish;
+      phases: BytesLike[];
+      metadata: string;
+    },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setClaimed(
+    scheduleID: BytesLike,
+    userType: BigNumberish,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setReferral(
     record: BytesLike,
@@ -351,17 +823,87 @@ export class EternalStorage extends BaseContract {
       paymentAsset: { token: string; assetType: BigNumberish };
       pricePerLot: BigNumberish;
       rollFee: BigNumberish;
+      maxBuyPerWallet: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    WRITER_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    campaigns(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string] & {
+        campaignId: string;
+        phasesLength: BigNumber;
+        metadata: string;
+      }
+    >;
+
+    campaignsByOwner(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    campaignsByOwnerLength(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    campaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCampaign(
+      record: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, string[], string] & {
+        campaignId: string;
+        phasesLength: BigNumber;
+        phases: string[];
+        metadata: string;
+      }
+    >;
+
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
     ): Promise<
       [string, BigNumber] & { referral: string; referralFee: BigNumber }
     >;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getSchedule(
       record: BytesLike,
@@ -380,6 +922,7 @@ export class EternalStorage extends BaseContract {
         BigNumber[],
         [string, number] & { token: string; assetType: number },
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         initialized: boolean;
@@ -395,6 +938,42 @@ export class EternalStorage extends BaseContract {
         paymentAsset: [string, number] & { token: string; assetType: number };
         pricePerLot: BigNumber;
         rollFee: BigNumber;
+        maxBuyPerWallet: BigNumber;
+      }
+    >;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    scheduleToCampaign(
+      arg0: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber, BigNumber] & {
+        campaignId: string;
+        campaignIndex: BigNumber;
+        scheduleIndex: BigNumber;
       }
     >;
 
@@ -413,6 +992,7 @@ export class EternalStorage extends BaseContract {
         BigNumber,
         [string, number] & { token: string; assetType: number },
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         initialized: boolean;
@@ -426,6 +1006,7 @@ export class EternalStorage extends BaseContract {
         paymentAsset: [string, number] & { token: string; assetType: number };
         pricePerLot: BigNumber;
         rollFee: BigNumber;
+        maxBuyPerWallet: BigNumber;
       }
     >;
 
@@ -436,6 +1017,31 @@ export class EternalStorage extends BaseContract {
       [string, BigNumber] & { referral: string; referralFee: BigNumber }
     >;
 
+    setBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setCampaign(
+      record: BigNumberish,
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setReferral(
       record: BytesLike,
       value: { referral: string; referralFee: BigNumberish },
@@ -458,21 +1064,180 @@ export class EternalStorage extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    "CampaignCreated(address,uint256)"(
+      from?: string | null,
+      campaignIndex?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { from: string; campaignIndex: BigNumber }
+    >;
+
+    CampaignCreated(
+      from?: string | null,
+      campaignIndex?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { from: string; campaignIndex: BigNumber }
+    >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+  };
 
   estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    WRITER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    campaigns(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    campaignsByOwner(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    campaignsByOwnerLength(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    campaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCampaign(
+      record: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getSchedule(
       record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    scheduleToCampaign(
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -483,6 +1248,31 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    setBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setCampaign(
+      record: BigNumberish,
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setReferral(
       record: BytesLike,
       value: { referral: string; referralFee: BigNumberish },
@@ -505,19 +1295,110 @@ export class EternalStorage extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    WRITER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    campaigns(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    campaignsByOwner(
+      arg0: string,
+      arg1: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    campaignsByOwnerLength(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    campaignsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaign(
+      record: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getSchedule(
       record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    scheduleToCampaign(
+      arg0: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -531,6 +1412,31 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    setBuyPerWallet(
+      scheduleID: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setCampaign(
+      record: BigNumberish,
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setReferral(
       record: BytesLike,
       value: { referral: string; referralFee: BigNumberish },
@@ -553,8 +1459,14 @@ export class EternalStorage extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

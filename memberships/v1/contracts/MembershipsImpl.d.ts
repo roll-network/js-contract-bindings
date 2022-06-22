@@ -12,7 +12,6 @@ import {
   BaseContract,
   ContractTransaction,
   Overrides,
-  PayableOverrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -22,32 +21,63 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MembershipsImplInterface extends ethers.utils.Interface {
   functions: {
+    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+    "MEMBERSHIP_ROLE()": FunctionFragment;
     "_computeReleasableAmount(bytes32)": FunctionFragment;
-    "buy(address,address,bytes32,uint256)": FunctionFragment;
+    "addCampaign((bytes32,uint256,bytes32[],string))": FunctionFragment;
+    "buy(address,address,bytes32,uint256,uint256)": FunctionFragment;
     "claim(address,bytes32)": FunctionFragment;
     "claimReferral(address,bytes32)": FunctionFragment;
     "claimRoll(address,address,bytes32)": FunctionFragment;
     "claimUnsoldTokens(address,bytes32)": FunctionFragment;
-    "createMintingScheduleValidation((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256))": FunctionFragment;
+    "createMintingScheduleValidation((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256,uint256))": FunctionFragment;
+    "getBuyPerWallet(bytes32,address)": FunctionFragment;
+    "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
+    "getRoleAdmin(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
+    "grantRole(bytes32,address)": FunctionFragment;
+    "hasRole(bytes32,address)": FunctionFragment;
+    "renounceRole(bytes32,address)": FunctionFragment;
     "revoke(bytes32)": FunctionFragment;
+    "revokeRole(bytes32,address)": FunctionFragment;
     "setAllowlist(bytes32,bytes32)": FunctionFragment;
-    "setEternalStorage(address)": FunctionFragment;
+    "setBuyPerWallet(bytes32,address,uint256)": FunctionFragment;
+    "setClaimed(bytes32,uint8,uint256)": FunctionFragment;
     "setReferral(bytes32,(address,uint256))": FunctionFragment;
-    "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256))": FunctionFragment;
+    "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256,uint256))": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
     "transferScheduleOwner(bytes32,address)": FunctionFragment;
     "updateReferral(bytes32,address)": FunctionFragment;
     "verifyMerkle(address,bytes32,bytes32[])": FunctionFragment;
   };
 
   encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "MEMBERSHIP_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "_computeReleasableAmount",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "addCampaign",
+    values: [
+      {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      }
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "buy",
-    values: [string, string, BytesLike, BigNumberish]
+    values: [string, string, BytesLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "claim",
@@ -80,25 +110,58 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBuyPerWallet",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClaimed",
+    values: [BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getReferral",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getRoleAdmin",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSchedule",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "grantRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceRole",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(functionFragment: "revoke", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "revokeRole",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "setAllowlist",
     values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setEternalStorage",
-    values: [string]
+    functionFragment: "setBuyPerWallet",
+    values: [BytesLike, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setClaimed",
+    values: [BytesLike, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setReferral",
@@ -122,8 +185,13 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferScheduleOwner",
@@ -139,7 +207,19 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "MEMBERSHIP_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_computeReleasableAmount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addCampaign",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "buy", data: BytesLike): Result;
@@ -158,28 +238,49 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getBuyPerWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "getReferral",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getRoleAdmin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSchedule",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "revoke", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAllowlist",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setEternalStorage",
+    functionFragment: "setBuyPerWallet",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setClaimed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setReferral",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setSchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -196,11 +297,38 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "EventBuyLot(address,bytes32,uint256)": EventFragment;
+    "EventBuyToken(address,bytes32,address,uint256)": EventFragment;
     "EventClaim(address,bytes32,uint256)": EventFragment;
+    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
+    "RoleGranted(bytes32,address,address)": EventFragment;
+    "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "EventBuyLot"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventBuyToken"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventClaim"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
+
+export type EventBuyLotEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    from: string;
+    scheduleId: string;
+    lots: BigNumber;
+  }
+>;
+
+export type EventBuyTokenEvent = TypedEvent<
+  [string, string, string, BigNumber] & {
+    from: string;
+    scheduleId: string;
+    token: string;
+    tokens: BigNumber;
+  }
+>;
 
 export type EventClaimEvent = TypedEvent<
   [string, string, BigNumber] & {
@@ -208,6 +336,22 @@ export type EventClaimEvent = TypedEvent<
     scheduleId: string;
     value: BigNumber;
   }
+>;
+
+export type RoleAdminChangedEvent = TypedEvent<
+  [string, string, string] & {
+    role: string;
+    previousAdminRole: string;
+    newAdminRole: string;
+  }
+>;
+
+export type RoleGrantedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type RoleRevokedEvent = TypedEvent<
+  [string, string, string] & { role: string; account: string; sender: string }
 >;
 
 export class MembershipsImpl extends BaseContract {
@@ -254,17 +398,32 @@ export class MembershipsImpl extends BaseContract {
   interface: MembershipsImplInterface;
 
   functions: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
+    MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<[string]>;
+
     _computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     buy(
       memberships: string,
       caller: string,
       scheduleId: BytesLike,
       amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      msgValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     claim(
@@ -305,9 +464,22 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<[void]>;
+
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getReferral(
       record: BytesLike,
@@ -315,6 +487,8 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<
       [[string, BigNumber] & { referral: string; referralFee: BigNumber }]
     >;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     getSchedule(
       record: BytesLike,
@@ -334,6 +508,7 @@ export class MembershipsImpl extends BaseContract {
           BigNumber[],
           [string, number] & { token: string; assetType: number },
           BigNumber,
+          BigNumber,
           BigNumber
         ] & {
           initialized: boolean;
@@ -349,12 +524,37 @@ export class MembershipsImpl extends BaseContract {
           paymentAsset: [string, number] & { token: string; assetType: number };
           pricePerLot: BigNumber;
           rollFee: BigNumber;
+          maxBuyPerWallet: BigNumber;
         }
       ]
     >;
 
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     revoke(
       scheduleId: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -364,8 +564,17 @@ export class MembershipsImpl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setEternalStorage(
-      _eternalStorage: string,
+    setBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -391,9 +600,15 @@ export class MembershipsImpl extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     transferScheduleOwner(
       scheduleId: BytesLike,
@@ -415,17 +630,32 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<[void]>;
   };
 
+  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+  MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<string>;
+
   _computeReleasableAmount(
     scheduleId: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  addCampaign(
+    value: {
+      campaignId: BytesLike;
+      phasesLength: BigNumberish;
+      phases: BytesLike[];
+      metadata: string;
+    },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   buy(
     memberships: string,
     caller: string,
     scheduleId: BytesLike,
     amount: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    msgValue: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   claim(
@@ -466,9 +696,22 @@ export class MembershipsImpl extends BaseContract {
       rollFee: BigNumberish;
       referral: string;
       referralFee: BigNumberish;
+      maxBuyPerWallet: BigNumberish;
     },
     overrides?: CallOverrides
   ): Promise<void>;
+
+  getBuyPerWallet(
+    scheduleId: BytesLike,
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getClaimed(
+    scheduleId: BytesLike,
+    userType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getReferral(
     record: BytesLike,
@@ -476,6 +719,8 @@ export class MembershipsImpl extends BaseContract {
   ): Promise<
     [string, BigNumber] & { referral: string; referralFee: BigNumber }
   >;
+
+  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   getSchedule(
     record: BytesLike,
@@ -494,6 +739,7 @@ export class MembershipsImpl extends BaseContract {
       BigNumber[],
       [string, number] & { token: string; assetType: number },
       BigNumber,
+      BigNumber,
       BigNumber
     ] & {
       initialized: boolean;
@@ -509,11 +755,36 @@ export class MembershipsImpl extends BaseContract {
       paymentAsset: [string, number] & { token: string; assetType: number };
       pricePerLot: BigNumber;
       rollFee: BigNumber;
+      maxBuyPerWallet: BigNumber;
     }
   >;
 
+  grantRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  hasRole(
+    role: BytesLike,
+    account: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  renounceRole(
+    role: BytesLike,
+    account: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   revoke(
     scheduleId: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  revokeRole(
+    role: BytesLike,
+    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -523,8 +794,17 @@ export class MembershipsImpl extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setEternalStorage(
-    _eternalStorage: string,
+  setBuyPerWallet(
+    scheduleId: BytesLike,
+    addr: string,
+    value: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setClaimed(
+    scheduleId: BytesLike,
+    userType: BigNumberish,
+    value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -550,9 +830,15 @@ export class MembershipsImpl extends BaseContract {
       paymentAsset: { token: string; assetType: BigNumberish };
       pricePerLot: BigNumberish;
       rollFee: BigNumberish;
+      maxBuyPerWallet: BigNumberish;
     },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   transferScheduleOwner(
     scheduleId: BytesLike,
@@ -574,16 +860,31 @@ export class MembershipsImpl extends BaseContract {
   ): Promise<void>;
 
   callStatic: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+
+    MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<string>;
+
     _computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     buy(
       memberships: string,
       caller: string,
       scheduleId: BytesLike,
       amount: BigNumberish,
+      msgValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -625,9 +926,22 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getReferral(
       record: BytesLike,
@@ -635,6 +949,8 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<
       [string, BigNumber] & { referral: string; referralFee: BigNumber }
     >;
+
+    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     getSchedule(
       record: BytesLike,
@@ -653,6 +969,7 @@ export class MembershipsImpl extends BaseContract {
         BigNumber[],
         [string, number] & { token: string; assetType: number },
         BigNumber,
+        BigNumber,
         BigNumber
       ] & {
         initialized: boolean;
@@ -668,10 +985,35 @@ export class MembershipsImpl extends BaseContract {
         paymentAsset: [string, number] & { token: string; assetType: number };
         pricePerLot: BigNumber;
         rollFee: BigNumber;
+        maxBuyPerWallet: BigNumber;
       }
     >;
 
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     revoke(scheduleId: BytesLike, overrides?: CallOverrides): Promise<void>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setAllowlist(
       scheduleId: BytesLike,
@@ -679,8 +1021,17 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setEternalStorage(
-      _eternalStorage: string,
+    setBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -706,9 +1057,15 @@ export class MembershipsImpl extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: CallOverrides
     ): Promise<void>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     transferScheduleOwner(
       scheduleId: BytesLike,
@@ -731,6 +1088,44 @@ export class MembershipsImpl extends BaseContract {
   };
 
   filters: {
+    "EventBuyLot(address,bytes32,uint256)"(
+      from?: string | null,
+      scheduleId?: BytesLike | null,
+      lots?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; scheduleId: string; lots: BigNumber }
+    >;
+
+    EventBuyLot(
+      from?: string | null,
+      scheduleId?: BytesLike | null,
+      lots?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { from: string; scheduleId: string; lots: BigNumber }
+    >;
+
+    "EventBuyToken(address,bytes32,address,uint256)"(
+      from?: string | null,
+      scheduleId?: BytesLike | null,
+      token?: string | null,
+      tokens?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber],
+      { from: string; scheduleId: string; token: string; tokens: BigNumber }
+    >;
+
+    EventBuyToken(
+      from?: string | null,
+      scheduleId?: BytesLike | null,
+      token?: string | null,
+      tokens?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber],
+      { from: string; scheduleId: string; token: string; tokens: BigNumber }
+    >;
+
     "EventClaim(address,bytes32,uint256)"(
       from?: string | null,
       scheduleId?: BytesLike | null,
@@ -748,12 +1143,80 @@ export class MembershipsImpl extends BaseContract {
       [string, string, BigNumber],
       { from: string; scheduleId: string; value: BigNumber }
     >;
+
+    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    RoleAdminChanged(
+      role?: BytesLike | null,
+      previousAdminRole?: BytesLike | null,
+      newAdminRole?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; previousAdminRole: string; newAdminRole: string }
+    >;
+
+    "RoleGranted(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleGranted(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    "RoleRevoked(bytes32,address,address)"(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
+
+    RoleRevoked(
+      role?: BytesLike | null,
+      account?: string | null,
+      sender?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { role: string; account: string; sender: string }
+    >;
   };
 
   estimateGas: {
+    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
+    MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+
     _computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     buy(
@@ -761,7 +1224,8 @@ export class MembershipsImpl extends BaseContract {
       caller: string,
       scheduleId: BytesLike,
       amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      msgValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     claim(
@@ -802,7 +1266,20 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -811,13 +1288,42 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getSchedule(
       record: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     revoke(
       scheduleId: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -827,8 +1333,17 @@ export class MembershipsImpl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setEternalStorage(
-      _eternalStorage: string,
+    setBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -854,8 +1369,14 @@ export class MembershipsImpl extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     transferScheduleOwner(
@@ -879,9 +1400,25 @@ export class MembershipsImpl extends BaseContract {
   };
 
   populateTransaction: {
+    DEFAULT_ADMIN_ROLE(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     _computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    addCampaign(
+      value: {
+        campaignId: BytesLike;
+        phasesLength: BigNumberish;
+        phases: BytesLike[];
+        metadata: string;
+      },
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     buy(
@@ -889,7 +1426,8 @@ export class MembershipsImpl extends BaseContract {
       caller: string,
       scheduleId: BytesLike,
       amount: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      msgValue: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     claim(
@@ -930,7 +1468,20 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -939,13 +1490,42 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getRoleAdmin(
+      role: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getSchedule(
       record: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    grantRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    hasRole(
+      role: BytesLike,
+      account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceRole(
+      role: BytesLike,
+      account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     revoke(
       scheduleId: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    revokeRole(
+      role: BytesLike,
+      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -955,8 +1535,17 @@ export class MembershipsImpl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setEternalStorage(
-      _eternalStorage: string,
+    setBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      value: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setClaimed(
+      scheduleId: BytesLike,
+      userType: BigNumberish,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -982,8 +1571,14 @@ export class MembershipsImpl extends BaseContract {
         paymentAsset: { token: string; assetType: BigNumberish };
         pricePerLot: BigNumberish;
         rollFee: BigNumberish;
+        maxBuyPerWallet: BigNumberish;
       },
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     transferScheduleOwner(

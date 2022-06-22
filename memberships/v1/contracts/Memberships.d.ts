@@ -22,8 +22,6 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MembershipsInterface extends ethers.utils.Interface {
   functions: {
-    "ADMIN_ROLE()": FunctionFragment;
-    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "buy(bytes32,uint256)": FunctionFragment;
     "buyWithAllowlist(bytes32,uint256,bytes32[])": FunctionFragment;
     "claim(bytes32)": FunctionFragment;
@@ -33,35 +31,20 @@ interface MembershipsInterface extends ethers.utils.Interface {
     "computeNextScheduleIdForHolder(address)": FunctionFragment;
     "computeReleasableAmount(bytes32)": FunctionFragment;
     "computeScheduleIdForAddressAndIndex(address,uint256)": FunctionFragment;
-    "createMintingSchedule((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256))": FunctionFragment;
-    "getIdAtIndex(uint256)": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "getSchedule(bytes32)": FunctionFragment;
-    "getScheduleByAddressAndIndex(address,uint256)": FunctionFragment;
-    "getSchedulesCount()": FunctionFragment;
-    "getSchedulesCountByBeneficiary(address)": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
+    "createCampaign(tuple[],string)": FunctionFragment;
+    "doTransfer(uint8,address,address,address,uint256)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
     "revoke(bytes32)": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
     "setAllowlist(bytes32,bytes32)": FunctionFragment;
     "setMinRollFee(uint256)": FunctionFragment;
     "setRollWallet(address)": FunctionFragment;
     "setTokenAllow(address,bool)": FunctionFragment;
-    "supportsInterface(bytes4)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "transferScheduleOwner(bytes32,address)": FunctionFragment;
     "updateReferral(bytes32,address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "buy",
     values: [BytesLike, BigNumberish]
@@ -96,7 +79,7 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "createMintingSchedule",
+    functionFragment: "createCampaign",
     values: [
       {
         start: BigNumberish;
@@ -110,50 +93,21 @@ interface MembershipsInterface extends ethers.utils.Interface {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
-      }
+        maxBuyPerWallet: BigNumberish;
+      }[],
+      string
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getIdAtIndex",
-    values: [BigNumberish]
+    functionFragment: "doTransfer",
+    values: [BigNumberish, string, string, string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getRoleAdmin",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSchedule",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getScheduleByAddressAndIndex",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSchedulesCount",
+    functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "getSchedulesCountByBeneficiary",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "grantRole",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hasRole",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceRole",
-    values: [BytesLike, string]
-  ): string;
   encodeFunctionData(functionFragment: "revoke", values: [BytesLike]): string;
-  encodeFunctionData(
-    functionFragment: "revokeRole",
-    values: [BytesLike, string]
-  ): string;
   encodeFunctionData(
     functionFragment: "setAllowlist",
     values: [BytesLike, BytesLike]
@@ -171,8 +125,8 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [string, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "supportsInterface",
-    values: [BytesLike]
+    functionFragment: "transferOwnership",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "transferScheduleOwner",
@@ -183,11 +137,6 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
 
-  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "buy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "buyWithAllowlist",
@@ -216,41 +165,16 @@ interface MembershipsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createMintingSchedule",
+    functionFragment: "createCampaign",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "doTransfer", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getIdAtIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getRoleAdmin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSchedule",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getScheduleByAddressAndIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSchedulesCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getSchedulesCountByBeneficiary",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceRole",
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revoke", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAllowlist",
     data: BytesLike
@@ -268,7 +192,7 @@ interface MembershipsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "supportsInterface",
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -281,39 +205,23 @@ interface MembershipsInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
-    "EventBuy(address,bytes32,address,uint256,uint256)": EventFragment;
     "EventReferralUpdated(address,bytes32,address)": EventFragment;
     "EventScheduleCreated(address,bytes32)": EventFragment;
     "EventScheduleCreatedWithToken(address,bytes32,address)": EventFragment;
     "EventTokenAllowedUpdated(address,address,bool)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
     "Revoked(bytes32)": EventFragment;
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "EventBuy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventReferralUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventScheduleCreated"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "EventScheduleCreatedWithToken"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventTokenAllowedUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Revoked"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
-
-export type EventBuyEvent = TypedEvent<
-  [string, string, string, BigNumber, BigNumber] & {
-    from: string;
-    scheduleId: string;
-    token: string;
-    lots: BigNumber;
-    tokens: BigNumber;
-  }
->;
 
 export type EventReferralUpdatedEvent = TypedEvent<
   [string, string, string] & {
@@ -335,23 +243,11 @@ export type EventTokenAllowedUpdatedEvent = TypedEvent<
   [string, string, boolean] & { from: string; token: string; value: boolean }
 >;
 
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string] & { previousOwner: string; newOwner: string }
+>;
+
 export type RevokedEvent = TypedEvent<[string] & { scheduleId: string }>;
-
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string] & {
-    role: string;
-    previousAdminRole: string;
-    newAdminRole: string;
-  }
->;
-
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string] & { role: string; account: string; sender: string }
->;
-
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string] & { role: string; account: string; sender: string }
->;
 
 export class Memberships extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -397,10 +293,6 @@ export class Memberships extends BaseContract {
   interface: MembershipsInterface;
 
   functions: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
     buy(
       scheduleId: BytesLike,
       amount: BigNumberish,
@@ -450,7 +342,7 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    createMintingSchedule(
+    createCampaign(
       params: {
         start: BigNumberish;
         duration: BigNumberish;
@@ -463,125 +355,29 @@ export class Memberships extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
-      },
+        maxBuyPerWallet: BigNumberish;
+      }[],
+      metadata: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getIdAtIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-
-    getSchedule(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          boolean,
-          boolean,
-          string,
-          BigNumber,
-          BigNumber,
-          string,
-          BigNumber,
-          BigNumber,
-          string[],
-          BigNumber[],
-          [string, number] & { token: string; assetType: number },
-          BigNumber,
-          BigNumber
-        ] & {
-          initialized: boolean;
-          revoked: boolean;
-          owner: string;
-          start: BigNumber;
-          duration: BigNumber;
-          merkleRoot: string;
-          amountTotal: BigNumber;
-          released: BigNumber;
-          lotToken: string[];
-          lotSize: BigNumber[];
-          paymentAsset: [string, number] & { token: string; assetType: number };
-          pricePerLot: BigNumber;
-          rollFee: BigNumber;
-        }
-      ]
-    >;
-
-    getScheduleByAddressAndIndex(
-      holder: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        [
-          boolean,
-          boolean,
-          string,
-          BigNumber,
-          BigNumber,
-          string,
-          BigNumber,
-          BigNumber,
-          string[],
-          BigNumber[],
-          [string, number] & { token: string; assetType: number },
-          BigNumber,
-          BigNumber
-        ] & {
-          initialized: boolean;
-          revoked: boolean;
-          owner: string;
-          start: BigNumber;
-          duration: BigNumber;
-          merkleRoot: string;
-          amountTotal: BigNumber;
-          released: BigNumber;
-          lotToken: string[];
-          lotSize: BigNumber[];
-          paymentAsset: [string, number] & { token: string; assetType: number };
-          pricePerLot: BigNumber;
-          rollFee: BigNumber;
-        }
-      ]
-    >;
-
-    getSchedulesCount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
+    doTransfer(
+      assetType: BigNumberish,
+      token: string,
+      from: string,
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     revoke(
       scheduleId: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -607,10 +403,10 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     transferScheduleOwner(
       scheduleId: BytesLike,
@@ -624,10 +420,6 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
 
   buy(
     scheduleId: BytesLike,
@@ -678,7 +470,7 @@ export class Memberships extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  createMintingSchedule(
+  createCampaign(
     params: {
       start: BigNumberish;
       duration: BigNumberish;
@@ -691,118 +483,29 @@ export class Memberships extends BaseContract {
       rollFee: BigNumberish;
       referral: string;
       referralFee: BigNumberish;
-    },
+      maxBuyPerWallet: BigNumberish;
+    }[],
+    metadata: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getIdAtIndex(index: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-  getSchedule(
-    scheduleId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      boolean,
-      boolean,
-      string,
-      BigNumber,
-      BigNumber,
-      string,
-      BigNumber,
-      BigNumber,
-      string[],
-      BigNumber[],
-      [string, number] & { token: string; assetType: number },
-      BigNumber,
-      BigNumber
-    ] & {
-      initialized: boolean;
-      revoked: boolean;
-      owner: string;
-      start: BigNumber;
-      duration: BigNumber;
-      merkleRoot: string;
-      amountTotal: BigNumber;
-      released: BigNumber;
-      lotToken: string[];
-      lotSize: BigNumber[];
-      paymentAsset: [string, number] & { token: string; assetType: number };
-      pricePerLot: BigNumber;
-      rollFee: BigNumber;
-    }
-  >;
-
-  getScheduleByAddressAndIndex(
-    holder: string,
-    index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [
-      boolean,
-      boolean,
-      string,
-      BigNumber,
-      BigNumber,
-      string,
-      BigNumber,
-      BigNumber,
-      string[],
-      BigNumber[],
-      [string, number] & { token: string; assetType: number },
-      BigNumber,
-      BigNumber
-    ] & {
-      initialized: boolean;
-      revoked: boolean;
-      owner: string;
-      start: BigNumber;
-      duration: BigNumber;
-      merkleRoot: string;
-      amountTotal: BigNumber;
-      released: BigNumber;
-      lotToken: string[];
-      lotSize: BigNumber[];
-      paymentAsset: [string, number] & { token: string; assetType: number };
-      pricePerLot: BigNumber;
-      rollFee: BigNumber;
-    }
-  >;
-
-  getSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getSchedulesCountByBeneficiary(
-    _beneficiary: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  grantRole(
-    role: BytesLike,
-    account: string,
+  doTransfer(
+    assetType: BigNumberish,
+    token: string,
+    from: string,
+    to: string,
+    value: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  hasRole(
-    role: BytesLike,
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  owner(overrides?: CallOverrides): Promise<string>;
 
-  renounceRole(
-    role: BytesLike,
-    account: string,
+  renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   revoke(
     scheduleId: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  revokeRole(
-    role: BytesLike,
-    account: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -828,10 +531,10 @@ export class Memberships extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  supportsInterface(
-    interfaceId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   transferScheduleOwner(
     scheduleId: BytesLike,
@@ -846,10 +549,6 @@ export class Memberships extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
     buy(
       scheduleId: BytesLike,
       amount: BigNumberish,
@@ -893,7 +592,7 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    createMintingSchedule(
+    createCampaign(
       params: {
         start: BigNumberish;
         duration: BigNumberish;
@@ -906,120 +605,26 @@ export class Memberships extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
-      },
+        maxBuyPerWallet: BigNumberish;
+      }[],
+      metadata: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getIdAtIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    getSchedule(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        boolean,
-        boolean,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber,
-        string[],
-        BigNumber[],
-        [string, number] & { token: string; assetType: number },
-        BigNumber,
-        BigNumber
-      ] & {
-        initialized: boolean;
-        revoked: boolean;
-        owner: string;
-        start: BigNumber;
-        duration: BigNumber;
-        merkleRoot: string;
-        amountTotal: BigNumber;
-        released: BigNumber;
-        lotToken: string[];
-        lotSize: BigNumber[];
-        paymentAsset: [string, number] & { token: string; assetType: number };
-        pricePerLot: BigNumber;
-        rollFee: BigNumber;
-      }
-    >;
-
-    getScheduleByAddressAndIndex(
-      holder: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [
-        boolean,
-        boolean,
-        string,
-        BigNumber,
-        BigNumber,
-        string,
-        BigNumber,
-        BigNumber,
-        string[],
-        BigNumber[],
-        [string, number] & { token: string; assetType: number },
-        BigNumber,
-        BigNumber
-      ] & {
-        initialized: boolean;
-        revoked: boolean;
-        owner: string;
-        start: BigNumber;
-        duration: BigNumber;
-        merkleRoot: string;
-        amountTotal: BigNumber;
-        released: BigNumber;
-        lotToken: string[];
-        lotSize: BigNumber[];
-        paymentAsset: [string, number] & { token: string; assetType: number };
-        pricePerLot: BigNumber;
-        rollFee: BigNumber;
-      }
-    >;
-
-    getSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
+    doTransfer(
+      assetType: BigNumberish,
+      token: string,
+      from: string,
+      to: string,
+      value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    owner(overrides?: CallOverrides): Promise<string>;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     revoke(scheduleId: BytesLike, overrides?: CallOverrides): Promise<void>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     setAllowlist(
       scheduleId: BytesLike,
@@ -1043,10 +648,10 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
+    transferOwnership(
+      newOwner: string,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     transferScheduleOwner(
       scheduleId: BytesLike,
@@ -1062,40 +667,6 @@ export class Memberships extends BaseContract {
   };
 
   filters: {
-    "EventBuy(address,bytes32,address,uint256,uint256)"(
-      from?: string | null,
-      scheduleId?: BytesLike | null,
-      token?: string | null,
-      lots?: null,
-      tokens?: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
-      {
-        from: string;
-        scheduleId: string;
-        token: string;
-        lots: BigNumber;
-        tokens: BigNumber;
-      }
-    >;
-
-    EventBuy(
-      from?: string | null,
-      scheduleId?: BytesLike | null,
-      token?: string | null,
-      lots?: null,
-      tokens?: null
-    ): TypedEventFilter<
-      [string, string, string, BigNumber, BigNumber],
-      {
-        from: string;
-        scheduleId: string;
-        token: string;
-        lots: BigNumber;
-        tokens: BigNumber;
-      }
-    >;
-
     "EventReferralUpdated(address,bytes32,address)"(
       from?: string | null,
       scheduleId?: BytesLike | null,
@@ -1160,6 +731,22 @@ export class Memberships extends BaseContract {
       { from: string; token: string; value: boolean }
     >;
 
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
+
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string],
+      { previousOwner: string; newOwner: string }
+    >;
+
     "Revoked(bytes32)"(
       scheduleId?: BytesLike | null
     ): TypedEventFilter<[string], { scheduleId: string }>;
@@ -1167,67 +754,9 @@ export class Memberships extends BaseContract {
     Revoked(
       scheduleId?: BytesLike | null
     ): TypedEventFilter<[string], { scheduleId: string }>;
-
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { role: string; previousAdminRole: string; newAdminRole: string }
-    >;
-
-    RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { role: string; previousAdminRole: string; newAdminRole: string }
-    >;
-
-    "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { role: string; account: string; sender: string }
-    >;
-
-    RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { role: string; account: string; sender: string }
-    >;
-
-    "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { role: string; account: string; sender: string }
-    >;
-
-    RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): TypedEventFilter<
-      [string, string, string],
-      { role: string; account: string; sender: string }
-    >;
   };
 
   estimateGas: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
     buy(
       scheduleId: BytesLike,
       amount: BigNumberish,
@@ -1277,7 +806,7 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    createMintingSchedule(
+    createCampaign(
       params: {
         start: BigNumberish;
         duration: BigNumberish;
@@ -1290,64 +819,29 @@ export class Memberships extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
-      },
+        maxBuyPerWallet: BigNumberish;
+      }[],
+      metadata: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getIdAtIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getSchedule(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getScheduleByAddressAndIndex(
-      holder: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getSchedulesCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
+    doTransfer(
+      assetType: BigNumberish,
+      token: string,
+      from: string,
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     revoke(
       scheduleId: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1373,9 +867,9 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     transferScheduleOwner(
@@ -1392,12 +886,6 @@ export class Memberships extends BaseContract {
   };
 
   populateTransaction: {
-    ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     buy(
       scheduleId: BytesLike,
       amount: BigNumberish,
@@ -1447,7 +935,7 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    createMintingSchedule(
+    createCampaign(
       params: {
         start: BigNumberish;
         duration: BigNumberish;
@@ -1460,64 +948,29 @@ export class Memberships extends BaseContract {
         rollFee: BigNumberish;
         referral: string;
         referralFee: BigNumberish;
-      },
+        maxBuyPerWallet: BigNumberish;
+      }[],
+      metadata: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getIdAtIndex(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSchedule(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getScheduleByAddressAndIndex(
-      holder: string,
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getSchedulesCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getSchedulesCountByBeneficiary(
-      _beneficiary: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
+    doTransfer(
+      assetType: BigNumberish,
+      token: string,
+      from: string,
+      to: string,
+      value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     revoke(
       scheduleId: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1543,9 +996,9 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    supportsInterface(
-      interfaceId: BytesLike,
-      overrides?: CallOverrides
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     transferScheduleOwner(
