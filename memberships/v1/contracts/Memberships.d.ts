@@ -28,15 +28,18 @@ interface MembershipsInterface extends ethers.utils.Interface {
     "claimReferral(bytes32)": FunctionFragment;
     "claimRoll(bytes32)": FunctionFragment;
     "claimUnsoldTokens(bytes32)": FunctionFragment;
-    "computeNextScheduleIdForHolder(address)": FunctionFragment;
     "computeReleasableAmount(bytes32)": FunctionFragment;
-    "computeScheduleIdForAddressAndIndex(address,uint256)": FunctionFragment;
+    "computeScheduleIdForAddressAndIndex(address,uint256,uint256)": FunctionFragment;
     "createCampaign(tuple[],string)": FunctionFragment;
     "doTransfer(uint8,address,address,address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
+    "pause()": FunctionFragment;
+    "paused()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "revoke(bytes32)": FunctionFragment;
     "setAllowlist(bytes32,bytes32)": FunctionFragment;
+    "setEternalStorageAddress(address)": FunctionFragment;
+    "setMembershipsImplAddress(address)": FunctionFragment;
     "setMinRollFee(uint256)": FunctionFragment;
     "setRollWallet(address)": FunctionFragment;
     "setTokenAllow(address,bool)": FunctionFragment;
@@ -67,16 +70,12 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "computeNextScheduleIdForHolder",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "computeReleasableAmount",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "computeScheduleIdForAddressAndIndex",
-    values: [string, BigNumberish]
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "createCampaign",
@@ -103,6 +102,8 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [BigNumberish, string, string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -111,6 +112,14 @@ interface MembershipsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setAllowlist",
     values: [BytesLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setEternalStorageAddress",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMembershipsImplAddress",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinRollFee",
@@ -153,10 +162,6 @@ interface MembershipsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "computeNextScheduleIdForHolder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "computeReleasableAmount",
     data: BytesLike
   ): Result;
@@ -170,6 +175,8 @@ interface MembershipsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "doTransfer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -177,6 +184,14 @@ interface MembershipsInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "revoke", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setAllowlist",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setEternalStorageAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMembershipsImplAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -205,23 +220,43 @@ interface MembershipsInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "EventEternalStorageUpdated(address,address)": EventFragment;
+    "EventMembershipsImplUpdated(address,address)": EventFragment;
     "EventReferralUpdated(address,bytes32,address)": EventFragment;
+    "EventRollWalletUpdated(address,address)": EventFragment;
     "EventScheduleCreated(address,bytes32)": EventFragment;
     "EventScheduleCreatedWithToken(address,bytes32,address)": EventFragment;
     "EventTokenAllowedUpdated(address,address,bool)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "Paused(address)": EventFragment;
     "Revoked(bytes32)": EventFragment;
+    "Unpaused(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "EventEternalStorageUpdated"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "EventMembershipsImplUpdated"
+  ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventReferralUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventRollWalletUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventScheduleCreated"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "EventScheduleCreatedWithToken"
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventTokenAllowedUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Revoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
 }
+
+export type EventEternalStorageUpdatedEvent = TypedEvent<
+  [string, string] & { from: string; addr: string }
+>;
+
+export type EventMembershipsImplUpdatedEvent = TypedEvent<
+  [string, string] & { from: string; addr: string }
+>;
 
 export type EventReferralUpdatedEvent = TypedEvent<
   [string, string, string] & {
@@ -229,6 +264,10 @@ export type EventReferralUpdatedEvent = TypedEvent<
     scheduleId: string;
     newReferral: string;
   }
+>;
+
+export type EventRollWalletUpdatedEvent = TypedEvent<
+  [string, string] & { from: string; addr: string }
 >;
 
 export type EventScheduleCreatedEvent = TypedEvent<
@@ -247,7 +286,11 @@ export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
 >;
 
+export type PausedEvent = TypedEvent<[string] & { account: string }>;
+
 export type RevokedEvent = TypedEvent<[string] & { scheduleId: string }>;
+
+export type UnpausedEvent = TypedEvent<[string] & { account: string }>;
 
 export class Memberships extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -326,11 +369,6 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    computeNextScheduleIdForHolder(
-      holder: string,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -339,6 +377,7 @@ export class Memberships extends BaseContract {
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
+      length: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -372,6 +411,12 @@ export class Memberships extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<[boolean]>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -387,19 +432,29 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setEternalStorageAddress(
+      addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setMembershipsImplAddress(
+      addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     setMinRollFee(
-      _minRollFee: BigNumberish,
+      newMinRollFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setRollWallet(
-      _rollWallet: string,
+      newRollWallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     setTokenAllow(
-      _token: string,
-      _value: boolean,
+      token: string,
+      value: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -415,8 +470,8 @@ export class Memberships extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -454,11 +509,6 @@ export class Memberships extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  computeNextScheduleIdForHolder(
-    holder: string,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   computeReleasableAmount(
     scheduleId: BytesLike,
     overrides?: CallOverrides
@@ -467,6 +517,7 @@ export class Memberships extends BaseContract {
   computeScheduleIdForAddressAndIndex(
     holder: string,
     index: BigNumberish,
+    length: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -500,6 +551,12 @@ export class Memberships extends BaseContract {
 
   owner(overrides?: CallOverrides): Promise<string>;
 
+  pause(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  paused(overrides?: CallOverrides): Promise<boolean>;
+
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -515,19 +572,29 @@ export class Memberships extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setEternalStorageAddress(
+    addr: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setMembershipsImplAddress(
+    addr: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   setMinRollFee(
-    _minRollFee: BigNumberish,
+    newMinRollFee: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setRollWallet(
-    _rollWallet: string,
+    newRollWallet: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   setTokenAllow(
-    _token: string,
-    _value: boolean,
+    token: string,
+    value: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -543,8 +610,8 @@ export class Memberships extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateReferral(
-    _scheduleId: BytesLike,
-    _referral: string,
+    scheduleId: BytesLike,
+    referral: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -576,11 +643,6 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    computeNextScheduleIdForHolder(
-      holder: string,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -589,6 +651,7 @@ export class Memberships extends BaseContract {
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
+      length: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -622,6 +685,10 @@ export class Memberships extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<string>;
 
+    pause(overrides?: CallOverrides): Promise<void>;
+
+    paused(overrides?: CallOverrides): Promise<boolean>;
+
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     revoke(scheduleId: BytesLike, overrides?: CallOverrides): Promise<void>;
@@ -632,19 +699,29 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setEternalStorageAddress(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMembershipsImplAddress(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setMinRollFee(
-      _minRollFee: BigNumberish,
+      newMinRollFee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setRollWallet(
-      _rollWallet: string,
+      newRollWallet: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setTokenAllow(
-      _token: string,
-      _value: boolean,
+      token: string,
+      value: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -660,13 +737,33 @@ export class Memberships extends BaseContract {
     ): Promise<void>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
   filters: {
+    "EventEternalStorageUpdated(address,address)"(
+      from?: string | null,
+      addr?: null
+    ): TypedEventFilter<[string, string], { from: string; addr: string }>;
+
+    EventEternalStorageUpdated(
+      from?: string | null,
+      addr?: null
+    ): TypedEventFilter<[string, string], { from: string; addr: string }>;
+
+    "EventMembershipsImplUpdated(address,address)"(
+      from?: string | null,
+      addr?: null
+    ): TypedEventFilter<[string, string], { from: string; addr: string }>;
+
+    EventMembershipsImplUpdated(
+      from?: string | null,
+      addr?: null
+    ): TypedEventFilter<[string, string], { from: string; addr: string }>;
+
     "EventReferralUpdated(address,bytes32,address)"(
       from?: string | null,
       scheduleId?: BytesLike | null,
@@ -684,6 +781,16 @@ export class Memberships extends BaseContract {
       [string, string, string],
       { from: string; scheduleId: string; newReferral: string }
     >;
+
+    "EventRollWalletUpdated(address,address)"(
+      from?: string | null,
+      addr?: null
+    ): TypedEventFilter<[string, string], { from: string; addr: string }>;
+
+    EventRollWalletUpdated(
+      from?: string | null,
+      addr?: null
+    ): TypedEventFilter<[string, string], { from: string; addr: string }>;
 
     "EventScheduleCreated(address,bytes32)"(
       from?: string | null,
@@ -747,6 +854,12 @@ export class Memberships extends BaseContract {
       { previousOwner: string; newOwner: string }
     >;
 
+    "Paused(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    Paused(account?: null): TypedEventFilter<[string], { account: string }>;
+
     "Revoked(bytes32)"(
       scheduleId?: BytesLike | null
     ): TypedEventFilter<[string], { scheduleId: string }>;
@@ -754,6 +867,12 @@ export class Memberships extends BaseContract {
     Revoked(
       scheduleId?: BytesLike | null
     ): TypedEventFilter<[string], { scheduleId: string }>;
+
+    "Unpaused(address)"(
+      account?: null
+    ): TypedEventFilter<[string], { account: string }>;
+
+    Unpaused(account?: null): TypedEventFilter<[string], { account: string }>;
   };
 
   estimateGas: {
@@ -790,11 +909,6 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    computeNextScheduleIdForHolder(
-      holder: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -803,6 +917,7 @@ export class Memberships extends BaseContract {
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
+      length: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -836,6 +951,12 @@ export class Memberships extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    paused(overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -851,19 +972,29 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setEternalStorageAddress(
+      addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMembershipsImplAddress(
+      addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     setMinRollFee(
-      _minRollFee: BigNumberish,
+      newMinRollFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setRollWallet(
-      _rollWallet: string,
+      newRollWallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setTokenAllow(
-      _token: string,
-      _value: boolean,
+      token: string,
+      value: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -879,8 +1010,8 @@ export class Memberships extends BaseContract {
     ): Promise<BigNumber>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -919,11 +1050,6 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    computeNextScheduleIdForHolder(
-      holder: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     computeReleasableAmount(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -932,6 +1058,7 @@ export class Memberships extends BaseContract {
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
+      length: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -965,6 +1092,12 @@ export class Memberships extends BaseContract {
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    pause(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -980,19 +1113,29 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setEternalStorageAddress(
+      addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMembershipsImplAddress(
+      addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     setMinRollFee(
-      _minRollFee: BigNumberish,
+      newMinRollFee: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setRollWallet(
-      _rollWallet: string,
+      newRollWallet: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setTokenAllow(
-      _token: string,
-      _value: boolean,
+      token: string,
+      value: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1008,8 +1151,8 @@ export class Memberships extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -104,7 +104,7 @@ export class TestContract extends BaseContract {
     getValue(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     setValue(
-      _value: BigNumberish,
+      newValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -118,7 +118,7 @@ export class TestContract extends BaseContract {
   getValue(overrides?: CallOverrides): Promise<BigNumber>;
 
   setValue(
-    _value: BigNumberish,
+    newValue: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -132,7 +132,7 @@ export class TestContract extends BaseContract {
     getValue(overrides?: CallOverrides): Promise<BigNumber>;
 
     setValue(
-      _value: BigNumberish,
+      newValue: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -157,7 +157,7 @@ export class TestContract extends BaseContract {
     getValue(overrides?: CallOverrides): Promise<BigNumber>;
 
     setValue(
-      _value: BigNumberish,
+      newValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -172,7 +172,7 @@ export class TestContract extends BaseContract {
     getValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setValue(
-      _value: BigNumberish,
+      newValue: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

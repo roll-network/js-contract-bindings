@@ -22,6 +22,7 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   functions: {
     "getCampaign(uint256)": FunctionFragment;
     "getCampaignByOwner(address)": FunctionFragment;
+    "getCampaignByReferral(address)": FunctionFragment;
     "getCampaignBySchedule(bytes32)": FunctionFragment;
     "getCampaignsLength()": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
@@ -33,6 +34,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCampaignByOwner",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignByReferral",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -54,6 +59,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaignByOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignByReferral",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -135,6 +144,22 @@ export class MembershipsView extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
+        BigNumber,
+        ([string, BigNumber, string[], string] & {
+          campaignId: string;
+          phasesLength: BigNumber;
+          phases: string[];
+          metadata: string;
+        })[]
+      ]
+    >;
+
+    getCampaignByReferral(
+      referral: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
         ([string, BigNumber, string[], string] & {
           campaignId: string;
           phasesLength: BigNumber;
@@ -215,12 +240,30 @@ export class MembershipsView extends BaseContract {
     owner: string,
     overrides?: CallOverrides
   ): Promise<
-    ([string, BigNumber, string[], string] & {
-      campaignId: string;
-      phasesLength: BigNumber;
-      phases: string[];
-      metadata: string;
-    })[]
+    [
+      BigNumber,
+      ([string, BigNumber, string[], string] & {
+        campaignId: string;
+        phasesLength: BigNumber;
+        phases: string[];
+        metadata: string;
+      })[]
+    ]
+  >;
+
+  getCampaignByReferral(
+    referral: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [
+      BigNumber,
+      ([string, BigNumber, string[], string] & {
+        campaignId: string;
+        phasesLength: BigNumber;
+        phases: string[];
+        metadata: string;
+      })[]
+    ]
   >;
 
   getCampaignBySchedule(
@@ -290,12 +333,30 @@ export class MembershipsView extends BaseContract {
       owner: string,
       overrides?: CallOverrides
     ): Promise<
-      ([string, BigNumber, string[], string] & {
-        campaignId: string;
-        phasesLength: BigNumber;
-        phases: string[];
-        metadata: string;
-      })[]
+      [
+        BigNumber,
+        ([string, BigNumber, string[], string] & {
+          campaignId: string;
+          phasesLength: BigNumber;
+          phases: string[];
+          metadata: string;
+        })[]
+      ]
+    >;
+
+    getCampaignByReferral(
+      referral: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        BigNumber,
+        ([string, BigNumber, string[], string] & {
+          campaignId: string;
+          phasesLength: BigNumber;
+          phases: string[];
+          metadata: string;
+        })[]
+      ]
     >;
 
     getCampaignBySchedule(
@@ -362,6 +423,11 @@ export class MembershipsView extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getCampaignByReferral(
+      referral: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getCampaignBySchedule(
       schedule: BytesLike,
       overrides?: CallOverrides
@@ -383,6 +449,11 @@ export class MembershipsView extends BaseContract {
 
     getCampaignByOwner(
       owner: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaignByReferral(
+      referral: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

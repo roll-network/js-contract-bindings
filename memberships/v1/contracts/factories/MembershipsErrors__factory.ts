@@ -81,6 +81,16 @@ const _abi = [
     name: "ErrorME12IndexOutOfBounds",
     type: "error",
   },
+  {
+    inputs: [],
+    name: "ErrorME13InvalidAddress",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME14BetaPeriodAlreadyFinish",
+    type: "error",
+  },
 ];
 
 export class MembershipsErrors__factory {

@@ -25,17 +25,19 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "WRITER_ROLE()": FunctionFragment;
     "addCampaign((bytes32,uint256,bytes32[],string))": FunctionFragment;
     "campaigns(uint256)": FunctionFragment;
-    "campaignsByOwner(address,uint256)": FunctionFragment;
-    "campaignsByOwnerLength(address)": FunctionFragment;
+    "campaignsByAddress(address,uint256)": FunctionFragment;
+    "campaignsByAddressLength(address)": FunctionFragment;
     "campaignsLength()": FunctionFragment;
     "getBuyPerWallet(bytes32,address)": FunctionFragment;
     "getCampaign(uint256)": FunctionFragment;
+    "getCampaignByAddressLength(address)": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "removeReferral(bytes32,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "scheduleToCampaign(bytes32)": FunctionFragment;
@@ -73,11 +75,11 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "campaignsByOwner",
+    functionFragment: "campaignsByAddress",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "campaignsByOwnerLength",
+    functionFragment: "campaignsByAddressLength",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -91,6 +93,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getCampaign",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignByAddressLength",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getClaimed",
@@ -114,6 +120,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeReferral",
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
@@ -201,11 +211,11 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "campaigns", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "campaignsByOwner",
+    functionFragment: "campaignsByAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "campaignsByOwnerLength",
+    functionFragment: "campaignsByAddressLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -218,6 +228,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaign",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignByAddressLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
@@ -235,6 +249,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "removeReferral",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
@@ -373,13 +391,15 @@ export class EternalStorage extends BaseContract {
       }
     >;
 
-    campaignsByOwner(
+    campaignsByAddress(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<
+      [BigNumber, number] & { campaignIndex: BigNumber; userType: number }
+    >;
 
-    campaignsByOwnerLength(
+    campaignsByAddressLength(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -405,6 +425,11 @@ export class EternalStorage extends BaseContract {
         }
       ]
     >;
+
+    getCampaignByAddressLength(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getClaimed(
       scheduleID: BytesLike,
@@ -471,6 +496,12 @@ export class EternalStorage extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    removeReferral(
+      record: BytesLike,
+      oldReferral: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     renounceRole(
       role: BytesLike,
@@ -618,13 +649,15 @@ export class EternalStorage extends BaseContract {
     }
   >;
 
-  campaignsByOwner(
+  campaignsByAddress(
     arg0: string,
     arg1: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<
+    [BigNumber, number] & { campaignIndex: BigNumber; userType: number }
+  >;
 
-  campaignsByOwnerLength(
+  campaignsByAddressLength(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -648,6 +681,11 @@ export class EternalStorage extends BaseContract {
       metadata: string;
     }
   >;
+
+  getCampaignByAddressLength(
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getClaimed(
     scheduleID: BytesLike,
@@ -712,6 +750,12 @@ export class EternalStorage extends BaseContract {
     account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  removeReferral(
+    record: BytesLike,
+    oldReferral: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   renounceRole(
     role: BytesLike,
@@ -859,13 +903,15 @@ export class EternalStorage extends BaseContract {
       }
     >;
 
-    campaignsByOwner(
+    campaignsByAddress(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, number] & { campaignIndex: BigNumber; userType: number }
+    >;
 
-    campaignsByOwnerLength(
+    campaignsByAddressLength(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -889,6 +935,11 @@ export class EternalStorage extends BaseContract {
         metadata: string;
       }
     >;
+
+    getCampaignByAddressLength(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getClaimed(
       scheduleID: BytesLike,
@@ -953,6 +1004,12 @@ export class EternalStorage extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    removeReferral(
+      record: BytesLike,
+      oldReferral: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     renounceRole(
       role: BytesLike,
@@ -1167,13 +1224,13 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    campaignsByOwner(
+    campaignsByAddress(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    campaignsByOwnerLength(
+    campaignsByAddressLength(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1188,6 +1245,11 @@ export class EternalStorage extends BaseContract {
 
     getCampaign(
       record: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCampaignByAddressLength(
+      addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1222,6 +1284,12 @@ export class EternalStorage extends BaseContract {
       role: BytesLike,
       account: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    removeReferral(
+      record: BytesLike,
+      oldReferral: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     renounceRole(
@@ -1328,13 +1396,13 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    campaignsByOwner(
+    campaignsByAddress(
       arg0: string,
       arg1: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    campaignsByOwnerLength(
+    campaignsByAddressLength(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1349,6 +1417,11 @@ export class EternalStorage extends BaseContract {
 
     getCampaign(
       record: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaignByAddressLength(
+      addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1383,6 +1456,12 @@ export class EternalStorage extends BaseContract {
       role: BytesLike,
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    removeReferral(
+      record: BytesLike,
+      oldReferral: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     renounceRole(

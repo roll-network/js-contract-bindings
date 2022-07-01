@@ -32,6 +32,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     "claimUnsoldTokens(address,bytes32)": FunctionFragment;
     "createMintingScheduleValidation((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256,uint256))": FunctionFragment;
     "getBuyPerWallet(bytes32,address)": FunctionFragment;
+    "getCampaignByAddressLength(address)": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -117,6 +118,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getBuyPerWallet",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignByAddressLength",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "getClaimed",
@@ -239,6 +244,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBuyPerWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignByAddressLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
@@ -475,6 +484,11 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getCampaignByAddressLength(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getClaimed(
       scheduleId: BytesLike,
       userType: BigNumberish,
@@ -617,8 +631,8 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -703,6 +717,11 @@ export class MembershipsImpl extends BaseContract {
 
   getBuyPerWallet(
     scheduleId: BytesLike,
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getCampaignByAddressLength(
     addr: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -847,8 +866,8 @@ export class MembershipsImpl extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateReferral(
-    _scheduleId: BytesLike,
-    _referral: string,
+    scheduleId: BytesLike,
+    referral: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -933,6 +952,11 @@ export class MembershipsImpl extends BaseContract {
 
     getBuyPerWallet(
       scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCampaignByAddressLength(
       addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1074,8 +1098,8 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<void>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1277,6 +1301,11 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getCampaignByAddressLength(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getClaimed(
       scheduleId: BytesLike,
       userType: BigNumberish,
@@ -1386,8 +1415,8 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<BigNumber>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1479,6 +1508,11 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getCampaignByAddressLength(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getClaimed(
       scheduleId: BytesLike,
       userType: BigNumberish,
@@ -1588,8 +1622,8 @@ export class MembershipsImpl extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateReferral(
-      _scheduleId: BytesLike,
-      _referral: string,
+      scheduleId: BytesLike,
+      referral: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
