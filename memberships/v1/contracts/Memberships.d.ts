@@ -402,7 +402,7 @@ export class Memberships extends BaseContract {
 
     doTransfer(
       assetType: BigNumberish,
-      token: string,
+      tokenAddress: string,
       from: string,
       to: string,
       value: BigNumberish,
@@ -542,7 +542,7 @@ export class Memberships extends BaseContract {
 
   doTransfer(
     assetType: BigNumberish,
-    token: string,
+    tokenAddress: string,
     from: string,
     to: string,
     value: BigNumberish,
@@ -676,7 +676,7 @@ export class Memberships extends BaseContract {
 
     doTransfer(
       assetType: BigNumberish,
-      token: string,
+      tokenAddress: string,
       from: string,
       to: string,
       value: BigNumberish,
@@ -942,7 +942,7 @@ export class Memberships extends BaseContract {
 
     doTransfer(
       assetType: BigNumberish,
-      token: string,
+      tokenAddress: string,
       from: string,
       to: string,
       value: BigNumberish,
@@ -1083,7 +1083,7 @@ export class Memberships extends BaseContract {
 
     doTransfer(
       assetType: BigNumberish,
-      token: string,
+      tokenAddress: string,
       from: string,
       to: string,
       value: BigNumberish,

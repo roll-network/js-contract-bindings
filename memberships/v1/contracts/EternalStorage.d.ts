@@ -29,6 +29,7 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "campaignsByAddressLength(address)": FunctionFragment;
     "campaignsLength()": FunctionFragment;
     "getBuyPerWallet(bytes32,address)": FunctionFragment;
+    "getBuyWalletCount(bytes32)": FunctionFragment;
     "getCampaign(uint256)": FunctionFragment;
     "getCampaignByAddressLength(address)": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
@@ -89,6 +90,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getBuyPerWallet",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBuyWalletCount",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getCampaign",
@@ -224,6 +229,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBuyPerWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBuyWalletCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -409,6 +418,11 @@ export class EternalStorage extends BaseContract {
     getBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getBuyWalletCount(
+      scheduleID: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -670,6 +684,11 @@ export class EternalStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getBuyWalletCount(
+    scheduleID: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getCampaign(
     record: BigNumberish,
     overrides?: CallOverrides
@@ -921,6 +940,11 @@ export class EternalStorage extends BaseContract {
     getBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBuyWalletCount(
+      scheduleID: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1243,6 +1267,11 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBuyWalletCount(
+      scheduleID: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getCampaign(
       record: BigNumberish,
       overrides?: CallOverrides
@@ -1412,6 +1441,11 @@ export class EternalStorage extends BaseContract {
     getBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBuyWalletCount(
+      scheduleID: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

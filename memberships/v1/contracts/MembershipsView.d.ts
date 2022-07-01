@@ -20,14 +20,20 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MembershipsViewInterface extends ethers.utils.Interface {
   functions: {
+    "getBuyWalletCount(bytes32)": FunctionFragment;
     "getCampaign(uint256)": FunctionFragment;
     "getCampaignByOwner(address)": FunctionFragment;
     "getCampaignByReferral(address)": FunctionFragment;
     "getCampaignBySchedule(bytes32)": FunctionFragment;
     "getCampaignsLength()": FunctionFragment;
+    "getReferral(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "getBuyWalletCount",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "getCampaign",
     values: [BigNumberish]
@@ -49,10 +55,18 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getReferral",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getSchedule",
     values: [BytesLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getBuyWalletCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaign",
     data: BytesLike
@@ -71,6 +85,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaignsLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getReferral",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -125,6 +143,11 @@ export class MembershipsView extends BaseContract {
   interface: MembershipsViewInterface;
 
   functions: {
+    getBuyWalletCount(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getCampaign(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -184,6 +207,13 @@ export class MembershipsView extends BaseContract {
 
     getCampaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getReferral(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [[string, BigNumber] & { referral: string; referralFee: BigNumber }]
+    >;
+
     getSchedule(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -223,6 +253,11 @@ export class MembershipsView extends BaseContract {
       ]
     >;
   };
+
+  getBuyWalletCount(
+    record: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getCampaign(
     index: BigNumberish,
@@ -279,6 +314,13 @@ export class MembershipsView extends BaseContract {
 
   getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getReferral(
+    record: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [string, BigNumber] & { referral: string; referralFee: BigNumber }
+  >;
+
   getSchedule(
     scheduleId: BytesLike,
     overrides?: CallOverrides
@@ -317,6 +359,11 @@ export class MembershipsView extends BaseContract {
   >;
 
   callStatic: {
+    getBuyWalletCount(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getCampaign(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -372,6 +419,13 @@ export class MembershipsView extends BaseContract {
 
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getReferral(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [string, BigNumber] & { referral: string; referralFee: BigNumber }
+    >;
+
     getSchedule(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -413,6 +467,11 @@ export class MembershipsView extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getBuyWalletCount(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getCampaign(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -435,6 +494,11 @@ export class MembershipsView extends BaseContract {
 
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getReferral(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getSchedule(
       scheduleId: BytesLike,
       overrides?: CallOverrides
@@ -442,6 +506,11 @@ export class MembershipsView extends BaseContract {
   };
 
   populateTransaction: {
+    getBuyWalletCount(
+      record: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getCampaign(
       index: BigNumberish,
       overrides?: CallOverrides
@@ -463,6 +532,11 @@ export class MembershipsView extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCampaignsLength(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getReferral(
+      record: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

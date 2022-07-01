@@ -23,13 +23,13 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MEMBERSHIP_ROLE()": FunctionFragment;
-    "_computeReleasableAmount(bytes32)": FunctionFragment;
     "addCampaign((bytes32,uint256,bytes32[],string))": FunctionFragment;
     "buy(address,address,bytes32,uint256,uint256)": FunctionFragment;
     "claim(address,bytes32)": FunctionFragment;
     "claimReferral(address,bytes32)": FunctionFragment;
     "claimRoll(address,address,bytes32)": FunctionFragment;
     "claimUnsoldTokens(address,bytes32)": FunctionFragment;
+    "computeReleasableAmount(bytes32)": FunctionFragment;
     "createMintingScheduleValidation((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256,uint256))": FunctionFragment;
     "getBuyPerWallet(bytes32,address)": FunctionFragment;
     "getCampaignByAddressLength(address)": FunctionFragment;
@@ -62,10 +62,6 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_computeReleasableAmount",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "addCampaign",
     values: [
       {
@@ -95,6 +91,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "claimUnsoldTokens",
     values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "computeReleasableAmount",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "createMintingScheduleValidation",
@@ -220,10 +220,6 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_computeReleasableAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "addCampaign",
     data: BytesLike
   ): Result;
@@ -236,6 +232,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "claimRoll", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimUnsoldTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "computeReleasableAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -411,11 +411,6 @@ export class MembershipsImpl extends BaseContract {
 
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
-    _computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     addCampaign(
       value: {
         campaignId: BytesLike;
@@ -459,6 +454,11 @@ export class MembershipsImpl extends BaseContract {
       scheduleId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    computeReleasableAmount(
+      scheduleId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     createMintingScheduleValidation(
       params: {
@@ -648,11 +648,6 @@ export class MembershipsImpl extends BaseContract {
 
   MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<string>;
 
-  _computeReleasableAmount(
-    scheduleId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   addCampaign(
     value: {
       campaignId: BytesLike;
@@ -696,6 +691,11 @@ export class MembershipsImpl extends BaseContract {
     scheduleId: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  computeReleasableAmount(
+    scheduleId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   createMintingScheduleValidation(
     params: {
@@ -883,11 +883,6 @@ export class MembershipsImpl extends BaseContract {
 
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<string>;
 
-    _computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addCampaign(
       value: {
         campaignId: BytesLike;
@@ -931,6 +926,11 @@ export class MembershipsImpl extends BaseContract {
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    computeReleasableAmount(
+      scheduleId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     createMintingScheduleValidation(
       params: {
@@ -1228,11 +1228,6 @@ export class MembershipsImpl extends BaseContract {
 
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addCampaign(
       value: {
         campaignId: BytesLike;
@@ -1275,6 +1270,11 @@ export class MembershipsImpl extends BaseContract {
       memberships: string,
       scheduleId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    computeReleasableAmount(
+      scheduleId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     createMintingScheduleValidation(
@@ -1435,11 +1435,6 @@ export class MembershipsImpl extends BaseContract {
 
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     addCampaign(
       value: {
         campaignId: BytesLike;
@@ -1482,6 +1477,11 @@ export class MembershipsImpl extends BaseContract {
       memberships: string,
       scheduleId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    computeReleasableAmount(
+      scheduleId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     createMintingScheduleValidation(
