@@ -91,6 +91,66 @@ const _abi = [
     name: "ErrorME14BetaPeriodAlreadyFinish",
     type: "error",
   },
+  {
+    inputs: [],
+    name: "ErrorME15InvalidDate",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME16InvalidDuration",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME17InvalidPrice",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME18LotArrayLengthMismatch",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME19NotEnoughEth",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME20InvalidReferral",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME21InvalidReferralFee",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME22MaxBuyPerWalletExceeded",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME23TotalClaimedError",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME24InvalidProof",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME25ScheduleNotFinishedOrSoldOut",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME26OnlyMembershipsImpl",
+    type: "error",
+  },
 ];
 
 export class MembershipsErrors__factory {

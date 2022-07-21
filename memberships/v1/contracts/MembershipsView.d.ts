@@ -26,6 +26,7 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     "getCampaignByReferral(address)": FunctionFragment;
     "getCampaignBySchedule(bytes32)": FunctionFragment;
     "getCampaignsLength()": FunctionFragment;
+    "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
   };
@@ -53,6 +54,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getCampaignsLength",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getClaimed",
+    values: [BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getReferral",
@@ -87,6 +92,7 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     functionFragment: "getCampaignsLength",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getReferral",
     data: BytesLike
@@ -207,6 +213,12 @@ export class MembershipsView extends BaseContract {
 
     getCampaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
@@ -314,6 +326,12 @@ export class MembershipsView extends BaseContract {
 
   getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getClaimed(
+    scheduleID: BytesLike,
+    userType: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getReferral(
     record: BytesLike,
     overrides?: CallOverrides
@@ -419,6 +437,12 @@ export class MembershipsView extends BaseContract {
 
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
@@ -494,6 +518,12 @@ export class MembershipsView extends BaseContract {
 
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getReferral(
       record: BytesLike,
       overrides?: CallOverrides
@@ -532,6 +562,12 @@ export class MembershipsView extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCampaignsLength(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getClaimed(
+      scheduleID: BytesLike,
+      userType: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
