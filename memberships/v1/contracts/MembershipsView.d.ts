@@ -20,6 +20,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface MembershipsViewInterface extends ethers.utils.Interface {
   functions: {
+    "getBuyPerWallet(bytes32,address)": FunctionFragment;
     "getBuyWalletCount(bytes32)": FunctionFragment;
     "getCampaign(uint256)": FunctionFragment;
     "getCampaignByOwner(address)": FunctionFragment;
@@ -31,6 +32,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     "getSchedule(bytes32)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "getBuyPerWallet",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(
     functionFragment: "getBuyWalletCount",
     values: [BytesLike]
@@ -68,6 +73,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getBuyPerWallet",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getBuyWalletCount",
     data: BytesLike
@@ -149,6 +158,12 @@ export class MembershipsView extends BaseContract {
   interface: MembershipsViewInterface;
 
   functions: {
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getBuyWalletCount(
       record: BytesLike,
       overrides?: CallOverrides
@@ -266,6 +281,12 @@ export class MembershipsView extends BaseContract {
     >;
   };
 
+  getBuyPerWallet(
+    scheduleId: BytesLike,
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getBuyWalletCount(
     record: BytesLike,
     overrides?: CallOverrides
@@ -377,6 +398,12 @@ export class MembershipsView extends BaseContract {
   >;
 
   callStatic: {
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBuyWalletCount(
       record: BytesLike,
       overrides?: CallOverrides
@@ -491,6 +518,12 @@ export class MembershipsView extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getBuyWalletCount(
       record: BytesLike,
       overrides?: CallOverrides
@@ -536,6 +569,12 @@ export class MembershipsView extends BaseContract {
   };
 
   populateTransaction: {
+    getBuyPerWallet(
+      scheduleId: BytesLike,
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getBuyWalletCount(
       record: BytesLike,
       overrides?: CallOverrides

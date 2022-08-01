@@ -31,7 +31,6 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     "claimUnsoldTokens(address,bytes32)": FunctionFragment;
     "computeReleasableAmount(bytes32)": FunctionFragment;
     "createMintingScheduleValidation((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256,uint256))": FunctionFragment;
-    "getBuyPerWallet(bytes32,address)": FunctionFragment;
     "getCampaignByAddressLength(address)": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
@@ -114,10 +113,6 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
         maxBuyPerWallet: BigNumberish;
       }
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBuyPerWallet",
-    values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getCampaignByAddressLength",
@@ -240,10 +235,6 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "createMintingScheduleValidation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBuyPerWallet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -478,12 +469,6 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    getBuyPerWallet(
-      scheduleId: BytesLike,
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getCampaignByAddressLength(
       addr: string,
       overrides?: CallOverrides
@@ -715,12 +700,6 @@ export class MembershipsImpl extends BaseContract {
     overrides?: CallOverrides
   ): Promise<void>;
 
-  getBuyPerWallet(
-    scheduleId: BytesLike,
-    addr: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   getCampaignByAddressLength(
     addr: string,
     overrides?: CallOverrides
@@ -949,12 +928,6 @@ export class MembershipsImpl extends BaseContract {
       },
       overrides?: CallOverrides
     ): Promise<void>;
-
-    getBuyPerWallet(
-      scheduleId: BytesLike,
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getCampaignByAddressLength(
       addr: string,
@@ -1295,12 +1268,6 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getBuyPerWallet(
-      scheduleId: BytesLike,
-      addr: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getCampaignByAddressLength(
       addr: string,
       overrides?: CallOverrides
@@ -1499,12 +1466,6 @@ export class MembershipsImpl extends BaseContract {
         referralFee: BigNumberish;
         maxBuyPerWallet: BigNumberish;
       },
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBuyPerWallet(
-      scheduleId: BytesLike,
-      addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
