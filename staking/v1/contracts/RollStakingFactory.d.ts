@@ -19,31 +19,37 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IStakingRegistryInterface extends ethers.utils.Interface {
+interface RollStakingFactoryInterface extends ethers.utils.Interface {
   functions: {
-    "assignOwnerToContract(address,address,address)": FunctionFragment;
-    "setCaller(address,bool)": FunctionFragment;
+    "createStakingContract(address[],address)": FunctionFragment;
+    "initialize(address)": FunctionFragment;
+    "registry()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "assignOwnerToContract",
-    values: [string, string, string]
+    functionFragment: "createStakingContract",
+    values: [string[], string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setCaller",
-    values: [string, boolean]
-  ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(functionFragment: "registry", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "assignOwnerToContract",
+    functionFragment: "createStakingContract",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setCaller", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "Deployed(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "Deployed"): EventFragment;
 }
 
-export class IStakingRegistry extends BaseContract {
+export type DeployedEvent = TypedEvent<[string] & { stakingContract: string }>;
+
+export class RollStakingFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -84,80 +90,85 @@ export class IStakingRegistry extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IStakingRegistryInterface;
+  interface: RollStakingFactoryInterface;
 
   functions: {
-    assignOwnerToContract(
-      _stakingContract: string,
-      _owner: string,
-      _previousOwner: string,
+    createStakingContract(
+      _rewardTokens: string[],
+      _stakedToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setCaller(
-      _caller: string,
-      _value: boolean,
+    initialize(
+      _registry: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    registry(overrides?: CallOverrides): Promise<[string]>;
   };
 
-  assignOwnerToContract(
-    _stakingContract: string,
-    _owner: string,
-    _previousOwner: string,
+  createStakingContract(
+    _rewardTokens: string[],
+    _stakedToken: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setCaller(
-    _caller: string,
-    _value: boolean,
+  initialize(
+    _registry: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  registry(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    assignOwnerToContract(
-      _stakingContract: string,
-      _owner: string,
-      _previousOwner: string,
+    createStakingContract(
+      _rewardTokens: string[],
+      _stakedToken: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string>;
 
-    setCaller(
-      _caller: string,
-      _value: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initialize(_registry: string, overrides?: CallOverrides): Promise<void>;
+
+    registry(overrides?: CallOverrides): Promise<string>;
   };
 
-  filters: {};
+  filters: {
+    "Deployed(address)"(
+      stakingContract?: null
+    ): TypedEventFilter<[string], { stakingContract: string }>;
+
+    Deployed(
+      stakingContract?: null
+    ): TypedEventFilter<[string], { stakingContract: string }>;
+  };
 
   estimateGas: {
-    assignOwnerToContract(
-      _stakingContract: string,
-      _owner: string,
-      _previousOwner: string,
+    createStakingContract(
+      _rewardTokens: string[],
+      _stakedToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setCaller(
-      _caller: string,
-      _value: boolean,
+    initialize(
+      _registry: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    registry(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    assignOwnerToContract(
-      _stakingContract: string,
-      _owner: string,
-      _previousOwner: string,
+    createStakingContract(
+      _rewardTokens: string[],
+      _stakedToken: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setCaller(
-      _caller: string,
-      _value: boolean,
+    initialize(
+      _registry: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    registry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

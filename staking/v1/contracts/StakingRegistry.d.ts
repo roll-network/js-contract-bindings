@@ -24,7 +24,6 @@ interface StakingRegistryInterface extends ethers.utils.Interface {
     "assignOwnerToContract(address,address,address)": FunctionFragment;
     "authorisedCallers(address)": FunctionFragment;
     "contractCountPerOwner(address)": FunctionFragment;
-    "contractIndex(address)": FunctionFragment;
     "contractToOwner(address)": FunctionFragment;
     "controller()": FunctionFragment;
     "getIndexArray(address[],address)": FunctionFragment;
@@ -43,10 +42,6 @@ interface StakingRegistryInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "contractCountPerOwner",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "contractIndex",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -87,10 +82,6 @@ interface StakingRegistryInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "contractIndex",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "contractToOwner",
     data: BytesLike
   ): Result;
@@ -110,11 +101,23 @@ interface StakingRegistryInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "CallerUpdated(address,bool)": EventFragment;
+    "ControllerUpdated(address)": EventFragment;
     "NewStakingContractOwner(address,address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "CallerUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ControllerUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewStakingContractOwner"): EventFragment;
 }
+
+export type CallerUpdatedEvent = TypedEvent<
+  [string, boolean] & { newCaller: string; newValue: boolean }
+>;
+
+export type ControllerUpdatedEvent = TypedEvent<
+  [string] & { newController: string }
+>;
 
 export type NewStakingContractOwnerEvent = TypedEvent<
   [string, string, string] & {
@@ -185,11 +188,6 @@ export class StakingRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    contractIndex(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     contractToOwner(arg0: string, overrides?: CallOverrides): Promise<[string]>;
 
     controller(overrides?: CallOverrides): Promise<[string]>;
@@ -231,8 +229,6 @@ export class StakingRegistry extends BaseContract {
     _owner: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  contractIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   contractToOwner(arg0: string, overrides?: CallOverrides): Promise<string>;
 
@@ -279,8 +275,6 @@ export class StakingRegistry extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    contractIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     contractToOwner(arg0: string, overrides?: CallOverrides): Promise<string>;
 
     controller(overrides?: CallOverrides): Promise<string>;
@@ -310,6 +304,30 @@ export class StakingRegistry extends BaseContract {
   };
 
   filters: {
+    "CallerUpdated(address,bool)"(
+      newCaller?: string | null,
+      newValue?: null
+    ): TypedEventFilter<
+      [string, boolean],
+      { newCaller: string; newValue: boolean }
+    >;
+
+    CallerUpdated(
+      newCaller?: string | null,
+      newValue?: null
+    ): TypedEventFilter<
+      [string, boolean],
+      { newCaller: string; newValue: boolean }
+    >;
+
+    "ControllerUpdated(address)"(
+      newController?: string | null
+    ): TypedEventFilter<[string], { newController: string }>;
+
+    ControllerUpdated(
+      newController?: string | null
+    ): TypedEventFilter<[string], { newController: string }>;
+
     "NewStakingContractOwner(address,address,address)"(
       stakingContract?: string | null,
       newOwner?: string | null,
@@ -346,8 +364,6 @@ export class StakingRegistry extends BaseContract {
       _owner: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    contractIndex(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     contractToOwner(
       arg0: string,
@@ -395,11 +411,6 @@ export class StakingRegistry extends BaseContract {
 
     contractCountPerOwner(
       _owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    contractIndex(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

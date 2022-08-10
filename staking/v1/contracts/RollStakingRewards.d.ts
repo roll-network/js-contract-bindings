@@ -19,7 +19,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
+interface RollStakingRewardsInterface extends ethers.utils.Interface {
   functions: {
     "acceptOwnership()": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
@@ -30,6 +30,7 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     "getFreeTokenAmount(address)": FunctionFragment;
     "getReward()": FunctionFragment;
     "getRewardForDuration(address)": FunctionFragment;
+    "initCampaign(uint256,uint256,uint256[],address[])": FunctionFragment;
     "isValidRewardToken(address)": FunctionFragment;
     "lastPauseTime()": FunctionFragment;
     "lastTimeRewardApplicable()": FunctionFragment;
@@ -37,7 +38,6 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     "lastUpdateTime()": FunctionFragment;
     "nominateNewOwner(address)": FunctionFragment;
     "nominatedOwner()": FunctionFragment;
-    "notifyRewardAmount(uint256[],address[])": FunctionFragment;
     "owner()": FunctionFragment;
     "paused()": FunctionFragment;
     "periodFinish()": FunctionFragment;
@@ -51,7 +51,6 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     "rewardsDuration()": FunctionFragment;
     "setPaused(bool)": FunctionFragment;
     "setRewardsDistribution(address)": FunctionFragment;
-    "setRewardsDuration(uint256,uint256)": FunctionFragment;
     "stake(uint256)": FunctionFragment;
     "token()": FunctionFragment;
     "tokenDecimals()": FunctionFragment;
@@ -85,6 +84,10 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "initCampaign",
+    values: [BigNumberish, BigNumberish, BigNumberish[], string[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "isValidRewardToken",
     values: [string]
   ): string;
@@ -111,10 +114,6 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "nominatedOwner",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "notifyRewardAmount",
-    values: [BigNumberish[], string[]]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -155,10 +154,6 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "setRewardsDistribution",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRewardsDuration",
-    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "stake", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
@@ -201,6 +196,10 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "initCampaign",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "isValidRewardToken",
     data: BytesLike
   ): Result;
@@ -226,10 +225,6 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "nominatedOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "notifyRewardAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -269,10 +264,6 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
     functionFragment: "setRewardsDistribution",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setRewardsDuration",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
   decodeFunctionResult(
@@ -290,27 +281,31 @@ interface RollStakingRewardsV2Interface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {
+    "FreeTokensClaimed(uint256,uint256)": EventFragment;
     "OwnerChanged(address,address)": EventFragment;
     "OwnerNominated(address)": EventFragment;
     "PauseChanged(bool)": EventFragment;
-    "Recovered(address,uint256)": EventFragment;
     "RewardAdded(uint256,address)": EventFragment;
+    "RewardDurationUpdated(uint256,uint256)": EventFragment;
     "RewardPaid(address,address,uint256)": EventFragment;
-    "RewardsUpdated(uint256,uint256)": EventFragment;
     "Staked(address,uint256)": EventFragment;
     "Withdrawn(address,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "FreeTokensClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnerNominated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PauseChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "RewardDurationUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardPaid"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RewardsUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Staked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Withdrawn"): EventFragment;
 }
+
+export type FreeTokensClaimedEvent = TypedEvent<
+  [BigNumber, BigNumber] & { newStart: BigNumber; newDuration: BigNumber }
+>;
 
 export type OwnerChangedEvent = TypedEvent<
   [string, string] & { oldOwner: string; newOwner: string }
@@ -320,12 +315,12 @@ export type OwnerNominatedEvent = TypedEvent<[string] & { newOwner: string }>;
 
 export type PauseChangedEvent = TypedEvent<[boolean] & { isPaused: boolean }>;
 
-export type RecoveredEvent = TypedEvent<
-  [string, BigNumber] & { token: string; amount: BigNumber }
->;
-
 export type RewardAddedEvent = TypedEvent<
   [BigNumber, string] & { reward: BigNumber; token: string }
+>;
+
+export type RewardDurationUpdatedEvent = TypedEvent<
+  [BigNumber, BigNumber] & { newStart: BigNumber; newDuration: BigNumber }
 >;
 
 export type RewardPaidEvent = TypedEvent<
@@ -336,10 +331,6 @@ export type RewardPaidEvent = TypedEvent<
   }
 >;
 
-export type RewardsUpdatedEvent = TypedEvent<
-  [BigNumber, BigNumber] & { newStart: BigNumber; newDuration: BigNumber }
->;
-
 export type StakedEvent = TypedEvent<
   [string, BigNumber] & { user: string; amount: BigNumber }
 >;
@@ -348,7 +339,7 @@ export type WithdrawnEvent = TypedEvent<
   [string, BigNumber] & { user: string; amount: BigNumber }
 >;
 
-export class RollStakingRewardsV2 extends BaseContract {
+export class RollStakingRewards extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -389,7 +380,7 @@ export class RollStakingRewardsV2 extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: RollStakingRewardsV2Interface;
+  interface: RollStakingRewardsInterface;
 
   functions: {
     acceptOwnership(
@@ -415,7 +406,7 @@ export class RollStakingRewardsV2 extends BaseContract {
     freeTokens(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getFreeTokenAmount(
-      token: string,
+      _token: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -427,6 +418,14 @@ export class RollStakingRewardsV2 extends BaseContract {
       _token: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    initCampaign(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
+      _rewards: BigNumberish[],
+      _tokens: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     isValidRewardToken(
       _token: string,
@@ -447,12 +446,6 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<ContractTransaction>;
 
     nominatedOwner(overrides?: CallOverrides): Promise<[string]>;
-
-    notifyRewardAmount(
-      _rewards: BigNumberish[],
-      _tokens: string[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -504,12 +497,6 @@ export class RollStakingRewardsV2 extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setRewardsDuration(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     stake(
       amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -556,7 +543,7 @@ export class RollStakingRewardsV2 extends BaseContract {
   freeTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   getFreeTokenAmount(
-    token: string,
+    _token: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -568,6 +555,14 @@ export class RollStakingRewardsV2 extends BaseContract {
     _token: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  initCampaign(
+    _periodStart: BigNumberish,
+    _rewardsDuration: BigNumberish,
+    _rewards: BigNumberish[],
+    _tokens: string[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   isValidRewardToken(
     _token: string,
@@ -588,12 +583,6 @@ export class RollStakingRewardsV2 extends BaseContract {
   ): Promise<ContractTransaction>;
 
   nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-  notifyRewardAmount(
-    _rewards: BigNumberish[],
-    _tokens: string[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -642,12 +631,6 @@ export class RollStakingRewardsV2 extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setRewardsDuration(
-    _periodStart: BigNumberish,
-    _rewardsDuration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   stake(
     amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -688,7 +671,7 @@ export class RollStakingRewardsV2 extends BaseContract {
     freeTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getFreeTokenAmount(
-      token: string,
+      _token: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -698,6 +681,14 @@ export class RollStakingRewardsV2 extends BaseContract {
       _token: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    initCampaign(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
+      _rewards: BigNumberish[],
+      _tokens: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     isValidRewardToken(
       _token: string,
@@ -715,12 +706,6 @@ export class RollStakingRewardsV2 extends BaseContract {
     nominateNewOwner(_owner: string, overrides?: CallOverrides): Promise<void>;
 
     nominatedOwner(overrides?: CallOverrides): Promise<string>;
-
-    notifyRewardAmount(
-      _rewards: BigNumberish[],
-      _tokens: string[],
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -769,12 +754,6 @@ export class RollStakingRewardsV2 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setRewardsDuration(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     stake(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     token(overrides?: CallOverrides): Promise<string>;
@@ -793,6 +772,22 @@ export class RollStakingRewardsV2 extends BaseContract {
   };
 
   filters: {
+    "FreeTokensClaimed(uint256,uint256)"(
+      newStart?: null,
+      newDuration?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { newStart: BigNumber; newDuration: BigNumber }
+    >;
+
+    FreeTokensClaimed(
+      newStart?: null,
+      newDuration?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { newStart: BigNumber; newDuration: BigNumber }
+    >;
+
     "OwnerChanged(address,address)"(
       oldOwner?: null,
       newOwner?: null
@@ -825,22 +820,6 @@ export class RollStakingRewardsV2 extends BaseContract {
       isPaused?: null
     ): TypedEventFilter<[boolean], { isPaused: boolean }>;
 
-    "Recovered(address,uint256)"(
-      token?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { token: string; amount: BigNumber }
-    >;
-
-    Recovered(
-      token?: null,
-      amount?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { token: string; amount: BigNumber }
-    >;
-
     "RewardAdded(uint256,address)"(
       reward?: null,
       token?: string | null
@@ -855,6 +834,22 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): TypedEventFilter<
       [BigNumber, string],
       { reward: BigNumber; token: string }
+    >;
+
+    "RewardDurationUpdated(uint256,uint256)"(
+      newStart?: null,
+      newDuration?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { newStart: BigNumber; newDuration: BigNumber }
+    >;
+
+    RewardDurationUpdated(
+      newStart?: null,
+      newDuration?: null
+    ): TypedEventFilter<
+      [BigNumber, BigNumber],
+      { newStart: BigNumber; newDuration: BigNumber }
     >;
 
     "RewardPaid(address,address,uint256)"(
@@ -873,22 +868,6 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { user: string; token: string; reward: BigNumber }
-    >;
-
-    "RewardsUpdated(uint256,uint256)"(
-      newStart?: null,
-      newDuration?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { newStart: BigNumber; newDuration: BigNumber }
-    >;
-
-    RewardsUpdated(
-      newStart?: null,
-      newDuration?: null
-    ): TypedEventFilter<
-      [BigNumber, BigNumber],
-      { newStart: BigNumber; newDuration: BigNumber }
     >;
 
     "Staked(address,uint256)"(
@@ -948,7 +927,7 @@ export class RollStakingRewardsV2 extends BaseContract {
     freeTokens(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getFreeTokenAmount(
-      token: string,
+      _token: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -959,6 +938,14 @@ export class RollStakingRewardsV2 extends BaseContract {
     getRewardForDuration(
       _token: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    initCampaign(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
+      _rewards: BigNumberish[],
+      _tokens: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     isValidRewardToken(
@@ -980,12 +967,6 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<BigNumber>;
 
     nominatedOwner(overrides?: CallOverrides): Promise<BigNumber>;
-
-    notifyRewardAmount(
-      _rewards: BigNumberish[],
-      _tokens: string[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1026,12 +1007,6 @@ export class RollStakingRewardsV2 extends BaseContract {
 
     setRewardsDistribution(
       _rewardsDistribution: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setRewardsDuration(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1088,7 +1063,7 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getFreeTokenAmount(
-      token: string,
+      _token: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1099,6 +1074,14 @@ export class RollStakingRewardsV2 extends BaseContract {
     getRewardForDuration(
       _token: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    initCampaign(
+      _periodStart: BigNumberish,
+      _rewardsDuration: BigNumberish,
+      _rewards: BigNumberish[],
+      _tokens: string[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     isValidRewardToken(
@@ -1122,12 +1105,6 @@ export class RollStakingRewardsV2 extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     nominatedOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    notifyRewardAmount(
-      _rewards: BigNumberish[],
-      _tokens: string[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1173,12 +1150,6 @@ export class RollStakingRewardsV2 extends BaseContract {
 
     setRewardsDistribution(
       _rewardsDistribution: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setRewardsDuration(
-      _periodStart: BigNumberish,
-      _rewardsDuration: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
