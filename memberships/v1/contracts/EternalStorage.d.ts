@@ -23,15 +23,15 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "WRITER_ROLE()": FunctionFragment;
-    "addCampaign((bytes32,uint256,bytes32[],string))": FunctionFragment;
-    "campaigns(uint256)": FunctionFragment;
+    "addCampaign((bytes32,bytes32[],string))": FunctionFragment;
     "campaignsByAddress(address,uint256)": FunctionFragment;
-    "campaignsByAddressLength(address)": FunctionFragment;
-    "campaignsLength()": FunctionFragment;
+    "campaignsCreatedByAddress(address)": FunctionFragment;
     "getBuyPerWallet(bytes32,address)": FunctionFragment;
     "getBuyWalletCount(bytes32)": FunctionFragment;
     "getCampaign(uint256)": FunctionFragment;
     "getCampaignByAddressLength(address)": FunctionFragment;
+    "getCampaignCreatedByAddress(address)": FunctionFragment;
+    "getCampaignsLength()": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -43,9 +43,7 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "revokeRole(bytes32,address)": FunctionFragment;
     "scheduleToCampaign(bytes32)": FunctionFragment;
     "schedules(bytes32)": FunctionFragment;
-    "schedulesReferral(bytes32)": FunctionFragment;
     "setBuyPerWallet(bytes32,address,uint256)": FunctionFragment;
-    "setCampaign(uint256,(bytes32,uint256,bytes32[],string))": FunctionFragment;
     "setClaimed(bytes32,uint8,uint256)": FunctionFragment;
     "setReferral(bytes32,(address,uint256))": FunctionFragment;
     "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256,uint256))": FunctionFragment;
@@ -62,30 +60,15 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addCampaign",
-    values: [
-      {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      }
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "campaigns",
-    values: [BigNumberish]
+    values: [{ campaignId: BytesLike; phases: BytesLike[]; metadata: string }]
   ): string;
   encodeFunctionData(
     functionFragment: "campaignsByAddress",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "campaignsByAddressLength",
+    functionFragment: "campaignsCreatedByAddress",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "campaignsLength",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getBuyPerWallet",
@@ -102,6 +85,14 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getCampaignByAddressLength",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignCreatedByAddress",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignsLength",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getClaimed",
@@ -148,24 +139,8 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "schedulesReferral",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setBuyPerWallet",
     values: [BytesLike, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setCampaign",
-    values: [
-      BigNumberish,
-      {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      }
-    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setClaimed",
@@ -214,17 +189,12 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     functionFragment: "addCampaign",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "campaigns", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "campaignsByAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "campaignsByAddressLength",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "campaignsLength",
+    functionFragment: "campaignsCreatedByAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -241,6 +211,14 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaignByAddressLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignCreatedByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignsLength",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
@@ -273,15 +251,7 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "schedules", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "schedulesReferral",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setBuyPerWallet",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setCampaign",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setClaimed", data: BytesLike): Result;
@@ -380,25 +350,9 @@ export class EternalStorage extends BaseContract {
     WRITER_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    campaigns(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string] & {
-        campaignId: string;
-        phasesLength: BigNumber;
-        metadata: string;
-      }
-    >;
 
     campaignsByAddress(
       arg0: string,
@@ -408,12 +362,10 @@ export class EternalStorage extends BaseContract {
       [BigNumber, number] & { campaignIndex: BigNumber; userType: number }
     >;
 
-    campaignsByAddressLength(
+    campaignsCreatedByAddress(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    campaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getBuyPerWallet(
       scheduleID: BytesLike,
@@ -431,9 +383,8 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
-        [string, BigNumber, string[], string] & {
+        [string, string[], string] & {
           campaignId: string;
-          phasesLength: BigNumber;
           phases: string[];
           metadata: string;
         }
@@ -444,6 +395,13 @@ export class EternalStorage extends BaseContract {
       addr: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getCampaignCreatedByAddress(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getCampaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getClaimed(
       scheduleID: BytesLike,
@@ -573,28 +531,10 @@ export class EternalStorage extends BaseContract {
       }
     >;
 
-    schedulesReferral(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { referral: string; referralFee: BigNumber }
-    >;
-
     setBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
       value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setCampaign(
-      record: BigNumberish,
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -643,25 +583,9 @@ export class EternalStorage extends BaseContract {
   WRITER_ROLE(overrides?: CallOverrides): Promise<string>;
 
   addCampaign(
-    value: {
-      campaignId: BytesLike;
-      phasesLength: BigNumberish;
-      phases: BytesLike[];
-      metadata: string;
-    },
+    value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  campaigns(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, string] & {
-      campaignId: string;
-      phasesLength: BigNumber;
-      metadata: string;
-    }
-  >;
 
   campaignsByAddress(
     arg0: string,
@@ -671,12 +595,10 @@ export class EternalStorage extends BaseContract {
     [BigNumber, number] & { campaignIndex: BigNumber; userType: number }
   >;
 
-  campaignsByAddressLength(
+  campaignsCreatedByAddress(
     arg0: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  campaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   getBuyPerWallet(
     scheduleID: BytesLike,
@@ -693,9 +615,8 @@ export class EternalStorage extends BaseContract {
     record: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, string[], string] & {
+    [string, string[], string] & {
       campaignId: string;
-      phasesLength: BigNumber;
       phases: string[];
       metadata: string;
     }
@@ -705,6 +626,13 @@ export class EternalStorage extends BaseContract {
     addr: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getCampaignCreatedByAddress(
+    addr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   getClaimed(
     scheduleID: BytesLike,
@@ -832,28 +760,10 @@ export class EternalStorage extends BaseContract {
     }
   >;
 
-  schedulesReferral(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber] & { referral: string; referralFee: BigNumber }
-  >;
-
   setBuyPerWallet(
     scheduleID: BytesLike,
     addr: string,
     value: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setCampaign(
-    record: BigNumberish,
-    value: {
-      campaignId: BytesLike;
-      phasesLength: BigNumberish;
-      phases: BytesLike[];
-      metadata: string;
-    },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -902,25 +812,9 @@ export class EternalStorage extends BaseContract {
     WRITER_ROLE(overrides?: CallOverrides): Promise<string>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: CallOverrides
     ): Promise<void>;
-
-    campaigns(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, string] & {
-        campaignId: string;
-        phasesLength: BigNumber;
-        metadata: string;
-      }
-    >;
 
     campaignsByAddress(
       arg0: string,
@@ -930,12 +824,10 @@ export class EternalStorage extends BaseContract {
       [BigNumber, number] & { campaignIndex: BigNumber; userType: number }
     >;
 
-    campaignsByAddressLength(
+    campaignsCreatedByAddress(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    campaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBuyPerWallet(
       scheduleID: BytesLike,
@@ -952,9 +844,8 @@ export class EternalStorage extends BaseContract {
       record: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, string[], string] & {
+      [string, string[], string] & {
         campaignId: string;
-        phasesLength: BigNumber;
         phases: string[];
         metadata: string;
       }
@@ -964,6 +855,13 @@ export class EternalStorage extends BaseContract {
       addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCampaignCreatedByAddress(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getClaimed(
       scheduleID: BytesLike,
@@ -1091,28 +989,10 @@ export class EternalStorage extends BaseContract {
       }
     >;
 
-    schedulesReferral(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber] & { referral: string; referralFee: BigNumber }
-    >;
-
     setBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
       value: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setCampaign(
-      record: BigNumberish,
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1234,18 +1114,8 @@ export class EternalStorage extends BaseContract {
     WRITER_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    campaigns(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     campaignsByAddress(
@@ -1254,12 +1124,10 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    campaignsByAddressLength(
+    campaignsCreatedByAddress(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    campaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBuyPerWallet(
       scheduleID: BytesLike,
@@ -1281,6 +1149,13 @@ export class EternalStorage extends BaseContract {
       addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCampaignCreatedByAddress(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getClaimed(
       scheduleID: BytesLike,
@@ -1340,26 +1215,10 @@ export class EternalStorage extends BaseContract {
 
     schedules(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
-    schedulesReferral(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     setBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
       value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setCampaign(
-      record: BigNumberish,
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1411,18 +1270,8 @@ export class EternalStorage extends BaseContract {
     WRITER_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    campaigns(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     campaignsByAddress(
@@ -1431,12 +1280,10 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    campaignsByAddressLength(
+    campaignsCreatedByAddress(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    campaignsLength(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBuyPerWallet(
       scheduleID: BytesLike,
@@ -1456,6 +1303,15 @@ export class EternalStorage extends BaseContract {
 
     getCampaignByAddressLength(
       addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaignCreatedByAddress(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaignsLength(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1520,26 +1376,10 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    schedulesReferral(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     setBuyPerWallet(
       scheduleID: BytesLike,
       addr: string,
       value: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setCampaign(
-      record: BigNumberish,
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

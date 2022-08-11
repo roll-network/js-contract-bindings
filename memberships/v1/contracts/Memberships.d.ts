@@ -28,8 +28,8 @@ interface MembershipsInterface extends ethers.utils.Interface {
     "claimReferral(bytes32)": FunctionFragment;
     "claimRoll(bytes32)": FunctionFragment;
     "claimUnsoldTokens(bytes32)": FunctionFragment;
-    "computeReleasableAmount(bytes32)": FunctionFragment;
     "computeScheduleIdForAddressAndIndex(address,uint256,uint256)": FunctionFragment;
+    "computeUnsoldLots(bytes32)": FunctionFragment;
     "createCampaign(tuple[],string)": FunctionFragment;
     "doTransfer(uint8,address,address,address,uint256)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -70,12 +70,12 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "computeReleasableAmount",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "computeScheduleIdForAddressAndIndex",
     values: [string, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "computeUnsoldLots",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "createCampaign",
@@ -162,11 +162,11 @@ interface MembershipsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "computeReleasableAmount",
+    functionFragment: "computeScheduleIdForAddressAndIndex",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "computeScheduleIdForAddressAndIndex",
+    functionFragment: "computeUnsoldLots",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -222,10 +222,12 @@ interface MembershipsInterface extends ethers.utils.Interface {
   events: {
     "EventEternalStorageUpdated(address,address)": EventFragment;
     "EventMembershipsImplUpdated(address,address)": EventFragment;
+    "EventMinRollFeeUpdated(uint256)": EventFragment;
     "EventReferralUpdated(address,bytes32,address)": EventFragment;
     "EventRollWalletUpdated(address,address)": EventFragment;
     "EventScheduleCreated(address,bytes32)": EventFragment;
     "EventScheduleCreatedWithToken(address,bytes32,address)": EventFragment;
+    "EventScheduleReferralSet(address,bytes32,address,uint256)": EventFragment;
     "EventTokenAllowedUpdated(address,address,bool)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Paused(address)": EventFragment;
@@ -237,12 +239,14 @@ interface MembershipsInterface extends ethers.utils.Interface {
   getEvent(
     nameOrSignatureOrTopic: "EventMembershipsImplUpdated"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventMinRollFeeUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventReferralUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventRollWalletUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventScheduleCreated"): EventFragment;
   getEvent(
     nameOrSignatureOrTopic: "EventScheduleCreatedWithToken"
   ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventScheduleReferralSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventTokenAllowedUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
@@ -256,6 +260,10 @@ export type EventEternalStorageUpdatedEvent = TypedEvent<
 
 export type EventMembershipsImplUpdatedEvent = TypedEvent<
   [string, string] & { from: string; addr: string }
+>;
+
+export type EventMinRollFeeUpdatedEvent = TypedEvent<
+  [BigNumber] & { newMinRollFee: BigNumber }
 >;
 
 export type EventReferralUpdatedEvent = TypedEvent<
@@ -276,6 +284,15 @@ export type EventScheduleCreatedEvent = TypedEvent<
 
 export type EventScheduleCreatedWithTokenEvent = TypedEvent<
   [string, string, string] & { from: string; scheduleId: string; token: string }
+>;
+
+export type EventScheduleReferralSetEvent = TypedEvent<
+  [string, string, string, BigNumber] & {
+    sender: string;
+    scheduleId: string;
+    referral: string;
+    referralFee: BigNumber;
+  }
 >;
 
 export type EventTokenAllowedUpdatedEvent = TypedEvent<
@@ -369,17 +386,17 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
       length: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    computeUnsoldLots(
+      scheduleId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     createCampaign(
       params: {
@@ -465,7 +482,7 @@ export class Memberships extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -509,17 +526,17 @@ export class Memberships extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  computeReleasableAmount(
-    scheduleId: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   computeScheduleIdForAddressAndIndex(
     holder: string,
     index: BigNumberish,
     length: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  computeUnsoldLots(
+    scheduleId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   createCampaign(
     params: {
@@ -605,7 +622,7 @@ export class Memberships extends BaseContract {
 
   transferScheduleOwner(
     scheduleId: BytesLike,
-    owner: string,
+    owner_: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -643,17 +660,17 @@ export class Memberships extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
       length: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    computeUnsoldLots(
+      scheduleId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     createCampaign(
       params: {
@@ -732,7 +749,7 @@ export class Memberships extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -746,28 +763,36 @@ export class Memberships extends BaseContract {
   filters: {
     "EventEternalStorageUpdated(address,address)"(
       from?: string | null,
-      addr?: null
+      addr?: string | null
     ): TypedEventFilter<[string, string], { from: string; addr: string }>;
 
     EventEternalStorageUpdated(
       from?: string | null,
-      addr?: null
+      addr?: string | null
     ): TypedEventFilter<[string, string], { from: string; addr: string }>;
 
     "EventMembershipsImplUpdated(address,address)"(
       from?: string | null,
-      addr?: null
+      addr?: string | null
     ): TypedEventFilter<[string, string], { from: string; addr: string }>;
 
     EventMembershipsImplUpdated(
       from?: string | null,
-      addr?: null
+      addr?: string | null
     ): TypedEventFilter<[string, string], { from: string; addr: string }>;
+
+    "EventMinRollFeeUpdated(uint256)"(
+      newMinRollFee?: null
+    ): TypedEventFilter<[BigNumber], { newMinRollFee: BigNumber }>;
+
+    EventMinRollFeeUpdated(
+      newMinRollFee?: null
+    ): TypedEventFilter<[BigNumber], { newMinRollFee: BigNumber }>;
 
     "EventReferralUpdated(address,bytes32,address)"(
       from?: string | null,
       scheduleId?: BytesLike | null,
-      newReferral?: null
+      newReferral?: string | null
     ): TypedEventFilter<
       [string, string, string],
       { from: string; scheduleId: string; newReferral: string }
@@ -776,7 +801,7 @@ export class Memberships extends BaseContract {
     EventReferralUpdated(
       from?: string | null,
       scheduleId?: BytesLike | null,
-      newReferral?: null
+      newReferral?: string | null
     ): TypedEventFilter<
       [string, string, string],
       { from: string; scheduleId: string; newReferral: string }
@@ -784,12 +809,12 @@ export class Memberships extends BaseContract {
 
     "EventRollWalletUpdated(address,address)"(
       from?: string | null,
-      addr?: null
+      addr?: string | null
     ): TypedEventFilter<[string, string], { from: string; addr: string }>;
 
     EventRollWalletUpdated(
       from?: string | null,
-      addr?: null
+      addr?: string | null
     ): TypedEventFilter<[string, string], { from: string; addr: string }>;
 
     "EventScheduleCreated(address,bytes32)"(
@@ -820,9 +845,39 @@ export class Memberships extends BaseContract {
       { from: string; scheduleId: string; token: string }
     >;
 
+    "EventScheduleReferralSet(address,bytes32,address,uint256)"(
+      sender?: string | null,
+      scheduleId?: BytesLike | null,
+      referral?: string | null,
+      referralFee?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber],
+      {
+        sender: string;
+        scheduleId: string;
+        referral: string;
+        referralFee: BigNumber;
+      }
+    >;
+
+    EventScheduleReferralSet(
+      sender?: string | null,
+      scheduleId?: BytesLike | null,
+      referral?: string | null,
+      referralFee?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber],
+      {
+        sender: string;
+        scheduleId: string;
+        referral: string;
+        referralFee: BigNumber;
+      }
+    >;
+
     "EventTokenAllowedUpdated(address,address,bool)"(
       from?: string | null,
-      token?: null,
+      token?: string | null,
       value?: null
     ): TypedEventFilter<
       [string, string, boolean],
@@ -831,7 +886,7 @@ export class Memberships extends BaseContract {
 
     EventTokenAllowedUpdated(
       from?: string | null,
-      token?: null,
+      token?: string | null,
       value?: null
     ): TypedEventFilter<
       [string, string, boolean],
@@ -909,15 +964,15 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
       length: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    computeUnsoldLots(
+      scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1005,7 +1060,7 @@ export class Memberships extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1050,15 +1105,15 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    computeReleasableAmount(
-      scheduleId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     computeScheduleIdForAddressAndIndex(
       holder: string,
       index: BigNumberish,
       length: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    computeUnsoldLots(
+      scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1146,7 +1201,7 @@ export class Memberships extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

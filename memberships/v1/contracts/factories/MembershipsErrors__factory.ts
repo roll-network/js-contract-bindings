@@ -156,6 +156,16 @@ const _abi = [
     name: "ErrorME27TotalAmountExceeded",
     type: "error",
   },
+  {
+    inputs: [],
+    name: "ErrorME28InvalidAmount",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "ErrorME29InvalidMaxBuyPerWallet",
+    type: "error",
+  },
 ];
 
 export class MembershipsErrors__factory {

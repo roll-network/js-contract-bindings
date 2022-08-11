@@ -23,15 +23,15 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   functions: {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "MEMBERSHIP_ROLE()": FunctionFragment;
-    "addCampaign((bytes32,uint256,bytes32[],string))": FunctionFragment;
+    "addCampaign((bytes32,bytes32[],string))": FunctionFragment;
     "buy(address,address,bytes32,uint256,uint256)": FunctionFragment;
     "claim(address,bytes32)": FunctionFragment;
     "claimReferral(address,bytes32)": FunctionFragment;
     "claimRoll(address,address,bytes32)": FunctionFragment;
     "claimUnsoldTokens(address,bytes32)": FunctionFragment;
-    "computeReleasableAmount(bytes32)": FunctionFragment;
+    "computeUnsoldLots(bytes32)": FunctionFragment;
     "createMintingScheduleValidation((uint256,uint256,bytes32,uint256,address[],uint256[],uint256,(address,uint8),uint256,address,uint256,uint256))": FunctionFragment;
-    "getCampaignByAddressLength(address)": FunctionFragment;
+    "getCampaignCreatedByAddress(address)": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
@@ -62,14 +62,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addCampaign",
-    values: [
-      {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      }
-    ]
+    values: [{ campaignId: BytesLike; phases: BytesLike[]; metadata: string }]
   ): string;
   encodeFunctionData(
     functionFragment: "buy",
@@ -92,7 +85,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     values: [string, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "computeReleasableAmount",
+    functionFragment: "computeUnsoldLots",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
@@ -115,7 +108,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "getCampaignByAddressLength",
+    functionFragment: "getCampaignCreatedByAddress",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -230,7 +223,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "computeReleasableAmount",
+    functionFragment: "computeUnsoldLots",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -238,7 +231,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getCampaignByAddressLength",
+    functionFragment: "getCampaignCreatedByAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getClaimed", data: BytesLike): Result;
@@ -297,21 +290,35 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): Result;
 
   events: {
+    "EventAllowlistUpdated(bytes32,bytes32)": EventFragment;
     "EventBuyLot(address,bytes32,uint256)": EventFragment;
     "EventBuyToken(address,bytes32,address,uint256)": EventFragment;
     "EventClaim(address,bytes32,uint256)": EventFragment;
+    "EventScheduleOwnerTransferred(bytes32,address,address)": EventFragment;
+    "EventScheduleRevoked(bytes32)": EventFragment;
+    "EventUnsoldTokensClaimed(address,bytes32,uint256)": EventFragment;
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "EventAllowlistUpdated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventBuyLot"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventBuyToken"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EventClaim"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "EventScheduleOwnerTransferred"
+  ): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventScheduleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventUnsoldTokensClaimed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
 }
+
+export type EventAllowlistUpdatedEvent = TypedEvent<
+  [string, string] & { scheduleId: string; newRoot: string }
+>;
 
 export type EventBuyLotEvent = TypedEvent<
   [string, string, BigNumber] & {
@@ -335,6 +342,26 @@ export type EventClaimEvent = TypedEvent<
     from: string;
     scheduleId: string;
     value: BigNumber;
+  }
+>;
+
+export type EventScheduleOwnerTransferredEvent = TypedEvent<
+  [string, string, string] & {
+    scheduleId: string;
+    oldOwner: string;
+    newOwner: string;
+  }
+>;
+
+export type EventScheduleRevokedEvent = TypedEvent<
+  [string] & { scheduleId: string }
+>;
+
+export type EventUnsoldTokensClaimedEvent = TypedEvent<
+  [string, string, BigNumber] & {
+    memberships: string;
+    scheduleId: string;
+    amount: BigNumber;
   }
 >;
 
@@ -403,12 +430,7 @@ export class MembershipsImpl extends BaseContract {
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<[string]>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -446,7 +468,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    computeReleasableAmount(
+    computeUnsoldLots(
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -469,7 +491,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[void]>;
 
-    getCampaignByAddressLength(
+    getCampaignCreatedByAddress(
       addr: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -611,7 +633,7 @@ export class MembershipsImpl extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -634,12 +656,7 @@ export class MembershipsImpl extends BaseContract {
   MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<string>;
 
   addCampaign(
-    value: {
-      campaignId: BytesLike;
-      phasesLength: BigNumberish;
-      phases: BytesLike[];
-      metadata: string;
-    },
+    value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -677,7 +694,7 @@ export class MembershipsImpl extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  computeReleasableAmount(
+  computeUnsoldLots(
     scheduleId: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -700,7 +717,7 @@ export class MembershipsImpl extends BaseContract {
     overrides?: CallOverrides
   ): Promise<void>;
 
-  getCampaignByAddressLength(
+  getCampaignCreatedByAddress(
     addr: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -840,7 +857,7 @@ export class MembershipsImpl extends BaseContract {
 
   transferScheduleOwner(
     scheduleId: BytesLike,
-    owner: string,
+    owner_: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -863,12 +880,7 @@ export class MembershipsImpl extends BaseContract {
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<string>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -906,7 +918,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    computeReleasableAmount(
+    computeUnsoldLots(
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -929,7 +941,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getCampaignByAddressLength(
+    getCampaignCreatedByAddress(
       addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1066,7 +1078,7 @@ export class MembershipsImpl extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1085,6 +1097,22 @@ export class MembershipsImpl extends BaseContract {
   };
 
   filters: {
+    "EventAllowlistUpdated(bytes32,bytes32)"(
+      scheduleId?: BytesLike | null,
+      newRoot?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string],
+      { scheduleId: string; newRoot: string }
+    >;
+
+    EventAllowlistUpdated(
+      scheduleId?: BytesLike | null,
+      newRoot?: BytesLike | null
+    ): TypedEventFilter<
+      [string, string],
+      { scheduleId: string; newRoot: string }
+    >;
+
     "EventBuyLot(address,bytes32,uint256)"(
       from?: string | null,
       scheduleId?: BytesLike | null,
@@ -1139,6 +1167,50 @@ export class MembershipsImpl extends BaseContract {
     ): TypedEventFilter<
       [string, string, BigNumber],
       { from: string; scheduleId: string; value: BigNumber }
+    >;
+
+    "EventScheduleOwnerTransferred(bytes32,address,address)"(
+      scheduleId?: BytesLike | null,
+      oldOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { scheduleId: string; oldOwner: string; newOwner: string }
+    >;
+
+    EventScheduleOwnerTransferred(
+      scheduleId?: BytesLike | null,
+      oldOwner?: string | null,
+      newOwner?: string | null
+    ): TypedEventFilter<
+      [string, string, string],
+      { scheduleId: string; oldOwner: string; newOwner: string }
+    >;
+
+    "EventScheduleRevoked(bytes32)"(
+      scheduleId?: BytesLike | null
+    ): TypedEventFilter<[string], { scheduleId: string }>;
+
+    EventScheduleRevoked(
+      scheduleId?: BytesLike | null
+    ): TypedEventFilter<[string], { scheduleId: string }>;
+
+    "EventUnsoldTokensClaimed(address,bytes32,uint256)"(
+      memberships?: string | null,
+      scheduleId?: BytesLike | null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { memberships: string; scheduleId: string; amount: BigNumber }
+    >;
+
+    EventUnsoldTokensClaimed(
+      memberships?: string | null,
+      scheduleId?: BytesLike | null,
+      amount?: null
+    ): TypedEventFilter<
+      [string, string, BigNumber],
+      { memberships: string; scheduleId: string; amount: BigNumber }
     >;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)"(
@@ -1202,12 +1274,7 @@ export class MembershipsImpl extends BaseContract {
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1245,7 +1312,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    computeReleasableAmount(
+    computeUnsoldLots(
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1268,7 +1335,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getCampaignByAddressLength(
+    getCampaignCreatedByAddress(
       addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1377,7 +1444,7 @@ export class MembershipsImpl extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1403,12 +1470,7 @@ export class MembershipsImpl extends BaseContract {
     MEMBERSHIP_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addCampaign(
-      value: {
-        campaignId: BytesLike;
-        phasesLength: BigNumberish;
-        phases: BytesLike[];
-        metadata: string;
-      },
+      value: { campaignId: BytesLike; phases: BytesLike[]; metadata: string },
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1446,7 +1508,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    computeReleasableAmount(
+    computeUnsoldLots(
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1469,7 +1531,7 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getCampaignByAddressLength(
+    getCampaignCreatedByAddress(
       addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1578,7 +1640,7 @@ export class MembershipsImpl extends BaseContract {
 
     transferScheduleOwner(
       scheduleId: BytesLike,
-      owner: string,
+      owner_: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

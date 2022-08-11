@@ -148,6 +148,16 @@
       "inputs": [],
       "name": "ErrorME27TotalAmountExceeded",
       "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ErrorME28InvalidAmount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ErrorME29InvalidMaxBuyPerWallet",
+      "type": "error"
     }
   ],
   "bytecode": "0x",

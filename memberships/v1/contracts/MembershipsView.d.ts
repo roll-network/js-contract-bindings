@@ -174,9 +174,8 @@ export class MembershipsView extends BaseContract {
       overrides?: CallOverrides
     ): Promise<
       [
-        [string, BigNumber, string[], string] & {
+        [string, string[], string] & {
           campaignId: string;
-          phasesLength: BigNumber;
           phases: string[];
           metadata: string;
         }
@@ -189,9 +188,8 @@ export class MembershipsView extends BaseContract {
     ): Promise<
       [
         BigNumber,
-        ([string, BigNumber, string[], string] & {
+        ([string, string[], string] & {
           campaignId: string;
-          phasesLength: BigNumber;
           phases: string[];
           metadata: string;
         })[]
@@ -204,9 +202,8 @@ export class MembershipsView extends BaseContract {
     ): Promise<
       [
         BigNumber,
-        ([string, BigNumber, string[], string] & {
+        ([string, string[], string] & {
           campaignId: string;
-          phasesLength: BigNumber;
           phases: string[];
           metadata: string;
         })[]
@@ -296,9 +293,8 @@ export class MembershipsView extends BaseContract {
     index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<
-    [string, BigNumber, string[], string] & {
+    [string, string[], string] & {
       campaignId: string;
-      phasesLength: BigNumber;
       phases: string[];
       metadata: string;
     }
@@ -310,9 +306,8 @@ export class MembershipsView extends BaseContract {
   ): Promise<
     [
       BigNumber,
-      ([string, BigNumber, string[], string] & {
+      ([string, string[], string] & {
         campaignId: string;
-        phasesLength: BigNumber;
         phases: string[];
         metadata: string;
       })[]
@@ -325,9 +320,8 @@ export class MembershipsView extends BaseContract {
   ): Promise<
     [
       BigNumber,
-      ([string, BigNumber, string[], string] & {
+      ([string, string[], string] & {
         campaignId: string;
-        phasesLength: BigNumber;
         phases: string[];
         metadata: string;
       })[]
@@ -413,9 +407,8 @@ export class MembershipsView extends BaseContract {
       index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<
-      [string, BigNumber, string[], string] & {
+      [string, string[], string] & {
         campaignId: string;
-        phasesLength: BigNumber;
         phases: string[];
         metadata: string;
       }
@@ -427,9 +420,8 @@ export class MembershipsView extends BaseContract {
     ): Promise<
       [
         BigNumber,
-        ([string, BigNumber, string[], string] & {
+        ([string, string[], string] & {
           campaignId: string;
-          phasesLength: BigNumber;
           phases: string[];
           metadata: string;
         })[]
@@ -442,9 +434,8 @@ export class MembershipsView extends BaseContract {
     ): Promise<
       [
         BigNumber,
-        ([string, BigNumber, string[], string] & {
+        ([string, string[], string] & {
           campaignId: string;
-          phasesLength: BigNumber;
           phases: string[];
           metadata: string;
         })[]
