@@ -151,6 +151,11 @@ const _abi = [
     name: "ErrorME26OnlyMembershipsImpl",
     type: "error",
   },
+  {
+    inputs: [],
+    name: "ErrorME27TotalAmountExceeded",
+    type: "error",
+  },
 ];
 
 export class MembershipsErrors__factory {

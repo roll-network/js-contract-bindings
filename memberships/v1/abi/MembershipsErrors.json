@@ -143,6 +143,11 @@
       "inputs": [],
       "name": "ErrorME26OnlyMembershipsImpl",
       "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ErrorME27TotalAmountExceeded",
+      "type": "error"
     }
   ],
   "bytecode": "0x",
