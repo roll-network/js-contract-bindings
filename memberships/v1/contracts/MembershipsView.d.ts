@@ -30,6 +30,7 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
+    "getTokensAllowed()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -72,6 +73,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     functionFragment: "getSchedule",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getTokensAllowed",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "getBuyPerWallet",
@@ -108,6 +113,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokensAllowed",
     data: BytesLike
   ): Result;
 
@@ -276,6 +285,8 @@ export class MembershipsView extends BaseContract {
         }
       ]
     >;
+
+    getTokensAllowed(overrides?: CallOverrides): Promise<[string[]]>;
   };
 
   getBuyPerWallet(
@@ -391,6 +402,8 @@ export class MembershipsView extends BaseContract {
     }
   >;
 
+  getTokensAllowed(overrides?: CallOverrides): Promise<string[]>;
+
   callStatic: {
     getBuyPerWallet(
       scheduleId: BytesLike,
@@ -504,6 +517,8 @@ export class MembershipsView extends BaseContract {
         maxBuyPerWallet: BigNumber;
       }
     >;
+
+    getTokensAllowed(overrides?: CallOverrides): Promise<string[]>;
   };
 
   filters: {};
@@ -557,6 +572,8 @@ export class MembershipsView extends BaseContract {
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getTokensAllowed(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -610,5 +627,7 @@ export class MembershipsView extends BaseContract {
       scheduleId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getTokensAllowed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

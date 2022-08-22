@@ -32,6 +32,7 @@ interface MembershipsInterface extends ethers.utils.Interface {
     "computeUnsoldLots(bytes32)": FunctionFragment;
     "createCampaign(tuple[],string)": FunctionFragment;
     "doTransfer(uint8,address,address,address,uint256)": FunctionFragment;
+    "getMinRollFee()": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
     "paused()": FunctionFragment;
@@ -100,6 +101,10 @@ interface MembershipsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "doTransfer",
     values: [BigNumberish, string, string, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMinRollFee",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -174,6 +179,10 @@ interface MembershipsInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "doTransfer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMinRollFee",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -426,6 +435,8 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    getMinRollFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     pause(
@@ -566,6 +577,8 @@ export class Memberships extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  getMinRollFee(overrides?: CallOverrides): Promise<BigNumber>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   pause(
@@ -699,6 +712,8 @@ export class Memberships extends BaseContract {
       value: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getMinRollFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1004,6 +1019,8 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getMinRollFee(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     pause(
@@ -1144,6 +1161,8 @@ export class Memberships extends BaseContract {
       value: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    getMinRollFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

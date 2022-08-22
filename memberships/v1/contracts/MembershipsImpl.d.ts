@@ -38,6 +38,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     "getSchedule(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "isTokenAllowed(address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revoke(bytes32)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -46,6 +47,7 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     "setClaimed(bytes32,uint8,uint256)": FunctionFragment;
     "setReferral(bytes32,(address,uint256))": FunctionFragment;
     "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256,uint256))": FunctionFragment;
+    "setTokensAllowed(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "transferScheduleOwner(bytes32,address)": FunctionFragment;
     "updateReferral(bytes32,address)": FunctionFragment;
@@ -136,6 +138,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "isTokenAllowed",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "renounceRole",
     values: [BytesLike, string]
   ): string;
@@ -181,6 +187,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
         maxBuyPerWallet: BigNumberish;
       }
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTokensAllowed",
+    values: [string, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -250,6 +260,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "isTokenAllowed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
@@ -270,6 +284,10 @@ interface MembershipsImplInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setSchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTokensAllowed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -562,6 +580,8 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -623,6 +643,12 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         maxBuyPerWallet: BigNumberish;
       },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setTokensAllowed(
+      token: string,
+      value: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -786,6 +812,8 @@ export class MembershipsImpl extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<boolean>;
+
   renounceRole(
     role: BytesLike,
     account: string,
@@ -847,6 +875,12 @@ export class MembershipsImpl extends BaseContract {
       rollFee: BigNumberish;
       maxBuyPerWallet: BigNumberish;
     },
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setTokensAllowed(
+    token: string,
+    value: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1010,6 +1044,8 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<boolean>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1068,6 +1104,12 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         maxBuyPerWallet: BigNumberish;
       },
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTokensAllowed(
+      token: string,
+      value: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1373,6 +1415,8 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1434,6 +1478,12 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         maxBuyPerWallet: BigNumberish;
       },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setTokensAllowed(
+      token: string,
+      value: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1569,6 +1619,11 @@ export class MembershipsImpl extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isTokenAllowed(
+      addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     renounceRole(
       role: BytesLike,
       account: string,
@@ -1630,6 +1685,12 @@ export class MembershipsImpl extends BaseContract {
         rollFee: BigNumberish;
         maxBuyPerWallet: BigNumberish;
       },
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTokensAllowed(
+      token: string,
+      value: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

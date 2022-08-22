@@ -36,8 +36,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "getReferral(bytes32)": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "getSchedule(bytes32)": FunctionFragment;
+    "getTokensAllowed()": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "isTokenAllowed(address)": FunctionFragment;
     "removeReferral(bytes32,address)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -47,7 +49,9 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "setClaimed(bytes32,uint8,uint256)": FunctionFragment;
     "setReferral(bytes32,(address,uint256))": FunctionFragment;
     "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256,uint256))": FunctionFragment;
+    "setTokensAllowed(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "updateReferralIndex(address,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -111,12 +115,20 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "getTokensAllowed",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "grantRole",
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
     functionFragment: "hasRole",
     values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isTokenAllowed",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "removeReferral",
@@ -173,8 +185,16 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "setTokensAllowed",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateReferralIndex",
+    values: [string, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -234,8 +254,16 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     functionFragment: "getSchedule",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokensAllowed",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTokenAllowed",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "removeReferral",
     data: BytesLike
@@ -264,7 +292,15 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setTokensAllowed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateReferralIndex",
     data: BytesLike
   ): Result;
 
@@ -457,6 +493,8 @@ export class EternalStorage extends BaseContract {
       ]
     >;
 
+    getTokensAllowed(overrides?: CallOverrides): Promise<[string[]]>;
+
     grantRole(
       role: BytesLike,
       account: string,
@@ -468,6 +506,8 @@ export class EternalStorage extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     removeReferral(
       record: BytesLike,
@@ -572,10 +612,22 @@ export class EternalStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setTokensAllowed(
+      token: string,
+      value: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    updateReferralIndex(
+      referral: string,
+      campaignIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -686,6 +738,8 @@ export class EternalStorage extends BaseContract {
     }
   >;
 
+  getTokensAllowed(overrides?: CallOverrides): Promise<string[]>;
+
   grantRole(
     role: BytesLike,
     account: string,
@@ -697,6 +751,8 @@ export class EternalStorage extends BaseContract {
     account: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<boolean>;
 
   removeReferral(
     record: BytesLike,
@@ -801,10 +857,22 @@ export class EternalStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setTokensAllowed(
+    token: string,
+    value: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  updateReferralIndex(
+    referral: string,
+    campaignIndex: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -915,6 +983,8 @@ export class EternalStorage extends BaseContract {
       }
     >;
 
+    getTokensAllowed(overrides?: CallOverrides): Promise<string[]>;
+
     grantRole(
       role: BytesLike,
       account: string,
@@ -926,6 +996,8 @@ export class EternalStorage extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<boolean>;
 
     removeReferral(
       record: BytesLike,
@@ -1030,10 +1102,22 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setTokensAllowed(
+      token: string,
+      value: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    updateReferralIndex(
+      referral: string,
+      campaignIndex: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -1178,6 +1262,8 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTokensAllowed(overrides?: CallOverrides): Promise<BigNumber>;
+
     grantRole(
       role: BytesLike,
       account: string,
@@ -1189,6 +1275,8 @@ export class EternalStorage extends BaseContract {
       account: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    isTokenAllowed(addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     removeReferral(
       record: BytesLike,
@@ -1256,9 +1344,21 @@ export class EternalStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setTokensAllowed(
+      token: string,
+      value: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    updateReferralIndex(
+      referral: string,
+      campaignIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
@@ -1336,6 +1436,8 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTokensAllowed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     grantRole(
       role: BytesLike,
       account: string,
@@ -1345,6 +1447,11 @@ export class EternalStorage extends BaseContract {
     hasRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isTokenAllowed(
+      addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1417,9 +1524,21 @@ export class EternalStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    setTokensAllowed(
+      token: string,
+      value: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updateReferralIndex(
+      referral: string,
+      campaignIndex: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
 }
