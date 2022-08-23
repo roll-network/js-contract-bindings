@@ -31,6 +31,7 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "getCampaign(uint256)": FunctionFragment;
     "getCampaignByAddressLength(address)": FunctionFragment;
     "getCampaignCreatedByAddress(address)": FunctionFragment;
+    "getCampaignMetadata(bytes32)": FunctionFragment;
     "getCampaignsLength()": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
@@ -51,6 +52,7 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     "setSchedule(bytes32,(bool,bool,address,uint256,uint256,bytes32,uint256,uint256,address[],uint256[],(address,uint8),uint256,uint256,uint256))": FunctionFragment;
     "setTokensAllowed(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "updateCampaignMetadata(bytes32,string)": FunctionFragment;
     "updateReferralIndex(address,uint256)": FunctionFragment;
   };
 
@@ -93,6 +95,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getCampaignCreatedByAddress",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignMetadata",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getCampaignsLength",
@@ -193,6 +199,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateCampaignMetadata",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateReferralIndex",
     values: [string, BigNumberish]
   ): string;
@@ -235,6 +245,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaignCreatedByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -297,6 +311,10 @@ interface EternalStorageInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateCampaignMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -436,6 +454,11 @@ export class EternalStorage extends BaseContract {
       addr: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getCampaignMetadata(
+      campaignId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getCampaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -623,6 +646,12 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     updateReferralIndex(
       referral: string,
       campaignIndex: BigNumberish,
@@ -683,6 +712,11 @@ export class EternalStorage extends BaseContract {
     addr: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getCampaignMetadata(
+    campaignId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -868,6 +902,12 @@ export class EternalStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  updateCampaignMetadata(
+    campaignId: BytesLike,
+    metadata: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   updateReferralIndex(
     referral: string,
     campaignIndex: BigNumberish,
@@ -928,6 +968,11 @@ export class EternalStorage extends BaseContract {
       addr: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getCampaignMetadata(
+      campaignId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1113,6 +1158,12 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     updateReferralIndex(
       referral: string,
       campaignIndex: BigNumberish,
@@ -1239,6 +1290,11 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getCampaignMetadata(
+      campaignId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getClaimed(
@@ -1355,6 +1411,12 @@ export class EternalStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     updateReferralIndex(
       referral: string,
       campaignIndex: BigNumberish,
@@ -1408,6 +1470,11 @@ export class EternalStorage extends BaseContract {
 
     getCampaignCreatedByAddress(
       addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaignMetadata(
+      campaignId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1533,6 +1600,12 @@ export class EternalStorage extends BaseContract {
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     updateReferralIndex(

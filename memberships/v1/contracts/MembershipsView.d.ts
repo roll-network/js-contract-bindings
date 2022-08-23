@@ -26,6 +26,7 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
     "getCampaignByOwner(address)": FunctionFragment;
     "getCampaignByReferral(address)": FunctionFragment;
     "getCampaignBySchedule(bytes32)": FunctionFragment;
+    "getCampaignMetadata(bytes32)": FunctionFragment;
     "getCampaignsLength()": FunctionFragment;
     "getClaimed(bytes32,uint8)": FunctionFragment;
     "getReferral(bytes32)": FunctionFragment;
@@ -55,6 +56,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCampaignBySchedule",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCampaignMetadata",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
@@ -100,6 +105,10 @@ interface MembershipsViewInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCampaignBySchedule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCampaignMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -232,6 +241,11 @@ export class MembershipsView extends BaseContract {
       ]
     >;
 
+    getCampaignMetadata(
+      campaignId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getCampaignsLength(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getClaimed(
@@ -350,6 +364,11 @@ export class MembershipsView extends BaseContract {
     }
   >;
 
+  getCampaignMetadata(
+    campaignId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
   getClaimed(
@@ -466,6 +485,11 @@ export class MembershipsView extends BaseContract {
       }
     >;
 
+    getCampaignMetadata(
+      campaignId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getClaimed(
@@ -555,6 +579,11 @@ export class MembershipsView extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getCampaignMetadata(
+      campaignId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getCampaignsLength(overrides?: CallOverrides): Promise<BigNumber>;
 
     getClaimed(
@@ -605,6 +634,11 @@ export class MembershipsView extends BaseContract {
 
     getCampaignBySchedule(
       schedule: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getCampaignMetadata(
+      campaignId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

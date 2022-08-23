@@ -46,6 +46,7 @@ interface MembershipsInterface extends ethers.utils.Interface {
     "setTokenAllow(address,bool)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "transferScheduleOwner(bytes32,address)": FunctionFragment;
+    "updateCampaignMetadata(bytes32,string)": FunctionFragment;
     "updateReferral(bytes32,address)": FunctionFragment;
   };
 
@@ -147,6 +148,10 @@ interface MembershipsInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "updateCampaignMetadata",
+    values: [BytesLike, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateReferral",
     values: [BytesLike, string]
   ): string;
@@ -221,6 +226,10 @@ interface MembershipsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferScheduleOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateCampaignMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -497,6 +506,12 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     updateReferral(
       scheduleId: BytesLike,
       referral: string,
@@ -639,6 +654,12 @@ export class Memberships extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updateCampaignMetadata(
+    campaignId: BytesLike,
+    metadata: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   updateReferral(
     scheduleId: BytesLike,
     referral: string,
@@ -765,6 +786,12 @@ export class Memberships extends BaseContract {
     transferScheduleOwner(
       scheduleId: BytesLike,
       owner_: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1081,6 +1108,12 @@ export class Memberships extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     updateReferral(
       scheduleId: BytesLike,
       referral: string,
@@ -1221,6 +1254,12 @@ export class Memberships extends BaseContract {
     transferScheduleOwner(
       scheduleId: BytesLike,
       owner_: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateCampaignMetadata(
+      campaignId: BytesLike,
+      metadata: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
